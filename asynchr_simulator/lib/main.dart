@@ -96,7 +96,6 @@ class _CodeInputScreenState extends State<CodeInputScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // DSL Editor
             Expanded(
               child: Card(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -138,7 +137,7 @@ class _CodeInputScreenState extends State<CodeInputScreen> {
                 ),
               ),
 
-            // Run Button
+            
             SizedBox(
               width: double.infinity,
               height: 50,

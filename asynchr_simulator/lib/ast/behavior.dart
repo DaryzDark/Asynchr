@@ -1,5 +1,4 @@
 import 'ast_node.dart';
-import 'context.dart';
 import 'condition.dart';
 
 class BehaviorBlock extends AstNode {

@@ -12,10 +12,11 @@ void main() async {
     Второй_Робот = (4,4) ВЛЕВО;
 
     Для Робот = {
-      ПОВТРОИТЬ {
         Шаг Вперёд;
-        Повернуть Вправо
-      }
+        Повернуть Влево;
+        Шаг Вперёд;
+        Шаг Вперёд
+
     };
 
     Для Второй_Робот = {
@@ -27,22 +28,18 @@ void main() async {
     ? (4,1)
   ''';
 
-  // 1. Создаём CharStream
   final charStream = InputStream.fromString(input);
 
-  // 2. Лексер
+
   final lexer = AsynchrGrammarLexer(charStream);
   final tokens = CommonTokenStream(lexer);
 
-  // 3. Парсер
+
   final parser = AsynchrGrammarParser(tokens);
   final tree = parser.program();
 
-  // 4. Построение AST
   final builder = AstBuilder();
   final ast = builder.visitProgram(tree);
-
-  // 5. Вывод AST (нужен toString в моделях!)
   print('--- AST ---');
   print(ast);
 }

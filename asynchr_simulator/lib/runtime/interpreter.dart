@@ -145,7 +145,7 @@ Future<void> runWithDelay({
           _pc[actor] = idx + 1;
           hasMore = true;
 
-          onStep?.call(); // уведомим UI
+          onStep?.call();
         }
       }
 

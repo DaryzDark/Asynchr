@@ -28,7 +28,7 @@ class WorldState {
 
   bool isWall(Offset pos) => walls.contains(pos);
   bool isBox(Offset pos) => boxes.contains(pos);
-  
+
   ActorState? actorAt(int x, int y) {
   for (final actor in actors.values) {
     if (actor.position.dx.toInt() == x && actor.position.dy.toInt() == y) {
