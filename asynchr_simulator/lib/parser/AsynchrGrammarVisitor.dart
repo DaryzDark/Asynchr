@@ -93,11 +93,11 @@ abstract class AsynchrGrammarVisitor<T> extends ParseTreeVisitor<T> {
   /// Return the visitor result.
   T? visitConditional(ConditionalContext ctx);
 
-  /// Visit a parse tree produced by the {@code WaitAction}
+  /// Visit a parse tree produced by the {@code WaitOther}
   /// labeled alternative in {@link AsynchrGrammarParser#action}.
   /// [ctx] the parse tree.
   /// Return the visitor result.
-  T? visitWaitAction(WaitActionContext ctx);
+  T? visitWaitOther(WaitOtherContext ctx);
 
   /// Visit a parse tree produced by the {@code SimpleAction}
   /// labeled alternative in {@link AsynchrGrammarParser#action}.
@@ -105,28 +105,69 @@ abstract class AsynchrGrammarVisitor<T> extends ParseTreeVisitor<T> {
   /// Return the visitor result.
   T? visitSimpleAction(SimpleActionContext ctx);
 
-  /// Visit a parse tree produced by [AsynchrGrammarParser.command].
+  /// Visit a parse tree produced by the {@code StepCmd}
+  /// labeled alternative in {@link AsynchrGrammarParser#command}.
   /// [ctx] the parse tree.
   /// Return the visitor result.
-  T? visitCommand(CommandContext ctx);
+  T? visitStepCmd(StepCmdContext ctx);
 
-  /// Visit a parse tree produced by [AsynchrGrammarParser.condition].
+  /// Visit a parse tree produced by the {@code TurnLeftCmd}
+  /// labeled alternative in {@link AsynchrGrammarParser#command}.
   /// [ctx] the parse tree.
   /// Return the visitor result.
-  T? visitCondition(ConditionContext ctx);
+  T? visitTurnLeftCmd(TurnLeftCmdContext ctx);
 
-  /// Visit a parse tree produced by [AsynchrGrammarParser.query_block].
+  /// Visit a parse tree produced by the {@code TurnRightCmd}
+  /// labeled alternative in {@link AsynchrGrammarParser#command}.
   /// [ctx] the parse tree.
   /// Return the visitor result.
-  T? visitQuery_block(Query_blockContext ctx);
+  T? visitTurnRightCmd(TurnRightCmdContext ctx);
 
-  /// Visit a parse tree produced by [AsynchrGrammarParser.query_statement].
+  /// Visit a parse tree produced by the {@code PickUpCmd}
+  /// labeled alternative in {@link AsynchrGrammarParser#command}.
   /// [ctx] the parse tree.
   /// Return the visitor result.
-  T? visitQuery_statement(Query_statementContext ctx);
+  T? visitPickUpCmd(PickUpCmdContext ctx);
 
-  /// Visit a parse tree produced by [AsynchrGrammarParser.data].
+  /// Visit a parse tree produced by the {@code DropCmd}
+  /// labeled alternative in {@link AsynchrGrammarParser#command}.
   /// [ctx] the parse tree.
   /// Return the visitor result.
-  T? visitData(DataContext ctx);
+  T? visitDropCmd(DropCmdContext ctx);
+
+  /// Visit a parse tree produced by the {@code PauseCmd}
+  /// labeled alternative in {@link AsynchrGrammarParser#command}.
+  /// [ctx] the parse tree.
+  /// Return the visitor result.
+  T? visitPauseCmd(PauseCmdContext ctx);
+
+  /// Visit a parse tree produced by the {@code SendCmd}
+  /// labeled alternative in {@link AsynchrGrammarParser#command}.
+  /// [ctx] the parse tree.
+  /// Return the visitor result.
+  T? visitSendCmd(SendCmdContext ctx);
+
+  /// Visit a parse tree produced by the {@code RecvCmd}
+  /// labeled alternative in {@link AsynchrGrammarParser#command}.
+  /// [ctx] the parse tree.
+  /// Return the visitor result.
+  T? visitRecvCmd(RecvCmdContext ctx);
+
+  /// Visit a parse tree produced by the {@code HasMsgCond}
+  /// labeled alternative in {@link AsynchrGrammarParser#condition}.
+  /// [ctx] the parse tree.
+  /// Return the visitor result.
+  T? visitHasMsgCond(HasMsgCondContext ctx);
+
+  /// Visit a parse tree produced by the {@code IdentifierCond}
+  /// labeled alternative in {@link AsynchrGrammarParser#condition}.
+  /// [ctx] the parse tree.
+  /// Return the visitor result.
+  T? visitIdentifierCond(IdentifierCondContext ctx);
+
+  /// Visit a parse tree produced by the {@code PositionCond}
+  /// labeled alternative in {@link AsynchrGrammarParser#condition}.
+  /// [ctx] the parse tree.
+  /// Return the visitor result.
+  T? visitPositionCond(PositionCondContext ctx);
 }

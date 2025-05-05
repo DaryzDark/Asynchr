@@ -4,8 +4,10 @@
       {
         "label": "Generate ANTLR Parser",
         "type": "shell",
-        "command": "antlr4",
+        "command": "java",
         "args": [
+          "-jar",
+          "C:\\Users\\danie\\Documents\\dev\\antlr4\\antlr-4.13.2-complete.jar",
           "-Dlanguage=Dart",
           "-visitor",
           "-o",

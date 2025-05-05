@@ -8,39 +8,35 @@ class AstBuilder extends AsynchrGrammarBaseVisitor<AstNode> {
   Program visitProgram(parser.ProgramContext ctx) {
     final contextBlock = visit(ctx.context_block()!) as ContextBlock;
     final behaviorBlock = ctx.behavior_block() != null ? visit(ctx.behavior_block()!) as BehaviorBlock : null;
-    final queryBlock = ctx.query_block() != null ? visit(ctx.query_block()!) as QueryBlock : null;
 
     return Program(
       context: contextBlock,
       behavior: behaviorBlock,
-      query: queryBlock,
     );
   }
 
   @override
-ContextBlock visitContext_block(parser.Context_blockContext ctx) {
-  final statements = ctx.getRuleContexts<parser.Context_statementContext>()
-      .map((stmt) => visit(stmt) as ContextStatement)
-      .toList();
-  return ContextBlock(statements);
-}
-
-@override
-ContextStatement visitContext_statement(parser.Context_statementContext ctx) {
-  if (ctx.board_def() != null) {
-    return visit(ctx.board_def()!) as ContextStatement;
-  } else if (ctx.wall_def() != null) {
-    return visit(ctx.wall_def()!) as ContextStatement;
-  } else if (ctx.box_def() != null) {
-    return visit(ctx.box_def()!) as ContextStatement;
-  } else if (ctx.actor_def() != null) {
-    return visit(ctx.actor_def()!) as ContextStatement;
-  } else {
-    throw UnimplementedError('Unknown context_statement: ${ctx.text}');
+  ContextBlock visitContext_block(parser.Context_blockContext ctx) {
+    final statements = ctx.getRuleContexts<parser.Context_statementContext>()
+        .map((stmt) => visit(stmt) as ContextStatement)
+        .toList();
+    return ContextBlock(statements);
   }
-}
 
-
+  @override
+  ContextStatement visitContext_statement(parser.Context_statementContext ctx) {
+    if (ctx.board_def() != null) {
+      return visit(ctx.board_def()!) as ContextStatement;
+    } else if (ctx.wall_def() != null) {
+      return visit(ctx.wall_def()!) as ContextStatement;
+    } else if (ctx.box_def() != null) {
+      return visit(ctx.box_def()!) as ContextStatement;
+    } else if (ctx.actor_def() != null) {
+      return visit(ctx.actor_def()!) as ContextStatement;
+    } else {
+      throw UnimplementedError('Unknown context_statement: ${ctx.text}');
+    }
+  }
 
   @override
   ContextStatement visitBoard_def(parser.Board_defContext ctx) {
@@ -71,139 +67,136 @@ ContextStatement visitContext_statement(parser.Context_statementContext ctx) {
 
   @override
   BehaviorBlock visitBehavior_block(parser.Behavior_blockContext ctx) {
-    final behaviors = ctx.behavior_statements()
+    final behaviors = ctx.getRuleContexts<parser.Behavior_statementContext>()
         .map((stmt) => visit(stmt) as BehaviorStatement)
         .toList();
     return BehaviorBlock(behaviors);
   }
 
   @override
-BehaviorStatement visitBehavior_statement(parser.Behavior_statementContext ctx) {
-  final actor = ctx.ID()?.text ?? 'Unnamed';
-  final actions = ctx.action_list()?.actions()
-      .map((a) => visit(a))
-      .whereType<Action>()
-      .toList() ?? [];
-  return BehaviorStatement(actor, actions);
-}
+  BehaviorStatement visitBehavior_statement(parser.Behavior_statementContext ctx) {
+    final actor = ctx.ID()?.text ?? 'Unnamed';
+    final actions = _visitActionList(ctx.action_list()!);
+    return BehaviorStatement(actor, actions);
+  }
 
-
-
-  // ==== ACTIONS ====
-
-  @override
-  Action visitWhileLoop(parser.WhileLoopContext ctx) {
-    final actions = ctx.action_list()!.actions()
+  List<Action> _visitActionList(parser.Action_listContext ctx) {
+    return ctx.actions()
         .map((a) => visit(a) as Action)
         .toList();
-    final cond = visit(ctx.condition()!) as Condition;
-    return WhileLoop(actions, cond);
+  }
+
+  // ==== ACTIONS ====
+  
+  @override
+  Action visitWhileLoop(parser.WhileLoopContext ctx) {
+    final actions = _visitActionList(ctx.action_list()!);
+    final condition = visit(ctx.condition()!) as Condition;
+    return WhileLoop(actions, condition);
   }
 
   @override
   Action visitRepeatForever(parser.RepeatForeverContext ctx) {
-    final actions = ctx.action_list()!.actions()
-        .map((a) => visit(a) as Action)
-        .toList();
+    final actions = _visitActionList(ctx.action_list()!);
     return RepeatForever(actions);
   }
 
   @override
-Action visitConditional(parser.ConditionalContext ctx) {
-  final cond = visit(ctx.condition()!) as Condition;
-
-  final thenCtx = ctx.action_(0);
-  if (thenCtx == null) {
-    throw StateError('Missing then-branch in conditional action');
-  }
-  final thenAction = visit(thenCtx) as Action;
-
-  // Попробуем получить else ветку, если она есть
-  Action? elseAction;
-  try {
-    final elseCtx = ctx.action_(1);
-    if (elseCtx != null) {
-      elseAction = visit(elseCtx) as Action;
+  Action visitConditional(parser.ConditionalContext ctx) {
+    final condition = visit(ctx.condition()!) as Condition;
+    final thenAction = visit(ctx.action_(0)!) as Action;
+    
+    Action? elseAction;
+    if (ctx.actions().length > 1) {
+      elseAction = visit(ctx.action_(1)!) as Action;
     }
-  } catch (_) {
-    // ignore if action_(1) is out of bounds
+    
+    return ConditionalAction(condition, thenAction, elseAction);
   }
-
-  return ConditionalAction(cond, thenAction, elseAction);
-}
-
-
 
   @override
-  Action visitWaitAction(parser.WaitActionContext ctx) {
+  Action visitWaitOther(parser.WaitOtherContext ctx) {
     return WaitAction(ctx.ID()?.text ?? 'Unknown');
   }
 
   @override
   Action visitSimpleAction(parser.SimpleActionContext ctx) {
-    final cmdText = ctx.command()?.text ?? '';
-    return SimpleCommand(_parseCommand(cmdText));
+    return visit(ctx.command()!) as Action;
+  }
+
+  // ==== COMMANDS ====
+  
+  @override
+  Action visitStepCmd(parser.StepCmdContext ctx) {
+    return StepCommand();
+  }
+  
+  @override
+  Action visitTurnLeftCmd(parser.TurnLeftCmdContext ctx) {
+    return TurnLeftCommand();
+  }
+  
+  @override
+  Action visitTurnRightCmd(parser.TurnRightCmdContext ctx) {
+    return TurnRightCommand();
+  }
+  
+  @override
+  Action visitPickUpCmd(parser.PickUpCmdContext ctx) {
+    return PickUpCommand();
+  }
+  
+  @override
+  Action visitDropCmd(parser.DropCmdContext ctx) {
+    return DropCommand();
+  }
+  
+  @override
+  Action visitPauseCmd(parser.PauseCmdContext ctx) {
+    final duration = double.parse(ctx.NUMBER()?.text ?? '0');
+    return PauseCommand(duration);
+  }
+  
+  @override
+  Action visitSendCmd(parser.SendCmdContext ctx) {
+    final message = _extractString(ctx.STRING()?.text ?? '"error"');
+    final recipient = ctx.ID()?.text ?? 'Unknown';
+    return SendMessageCommand(message, recipient);
+  }
+  
+  @override
+  Action visitRecvCmd(parser.RecvCmdContext ctx) {
+    if (ctx.STAR() != null) {
+      return ReceiveMessageCommand("", anyMessage: true);
+    } else {
+      final pattern = _extractString(ctx.STRING()?.text ?? '"error"');
+      return ReceiveMessageCommand(pattern);
+    }
   }
 
   // ==== CONDITIONS ====
 
   @override
-  Condition visitCondition(parser.ConditionContext ctx) {
-    final idText = ctx.ID()?.text;
-    if (idText != null) {
-      return IdentifierCondition(idText);
-    }
-
-    final dataCtx = ctx.data();
-    if (dataCtx?.position() != null) {
-      return PositionCondition(_visitPosition(dataCtx!.position()!));
-    }
-
-  throw UnimplementedError('Unknown condition: ${ctx.text}');
+  Condition visitHasMsgCond(parser.HasMsgCondContext ctx) {
+    return HasMessageCondition();
   }
-
-
-
-  // ==== QUERY ====
-
+  
   @override
-QueryBlock visitQuery_block(parser.Query_blockContext ctx) {
-  final queries = ctx.getRuleContexts<parser.Query_statementContext>()
-      .map((q) => visit(q) as QueryStatement)
-      .toList();
-  return QueryBlock(queries);
-}
-
-
-
+  Condition visitIdentifierCond(parser.IdentifierCondContext ctx) {
+    return IdentifierCondition(ctx.ID()?.text ?? 'Unknown');
+  }
+  
   @override
-QueryStatement visitQuery_statement(parser.Query_statementContext ctx) {
-  final dataCtx = ctx.data();
-  if (dataCtx == null) {
-    throw StateError('Missing data in query statement');
+  Condition visitPositionCond(parser.PositionCondContext ctx) {
+    return PositionCondition(_visitPosition(ctx.position()!));
   }
-
-  if (dataCtx.position() != null) {
-    return QueryStatement(PositionData(_visitPosition(dataCtx.position()!)));
-  } else if (dataCtx.NUMBER() != null) {
-    final numberText = dataCtx.NUMBER()!.text;
-    if (numberText == null) {
-      throw StateError('NUMBER token text is null');
-    }
-    return QueryStatement(NumberData(num.parse(numberText)));
-  } else {
-    throw UnimplementedError('Unknown query data: ${ctx.text}');
-  }
-}
-
 
   // ==== HELPERS ====
 
   List<Position> _visitPositions(parser.Position_groupContext ctx) {
-  final positions = ctx.positions();
-  return positions.map((p) => _visitPosition(p)).toList();
-}
-
+    final positions = ctx.positions();
+    return positions.map((p) => _visitPosition(p)).toList();
+  }
 
   Position _visitPosition(parser.PositionContext ctx) {
     final x = int.parse(ctx.NUMBER(0)?.text ?? '0');
@@ -225,21 +218,13 @@ QueryStatement visitQuery_statement(parser.Query_statementContext ctx) {
         throw ArgumentError('Unknown direction: $text');
     }
   }
-
-  Command _parseCommand(String text) {
-    switch (text.trim()) {
-      case 'Шаг Вперёд':
-        return Command.stepForward;
-      case 'Повернуть Влево':
-        return Command.turnLeft;
-      case 'Повернуть Вправо':
-        return Command.turnRight;
-      case 'Поднять_коробку':
-        return Command.pickUp;
-      case 'Опустить_коробку':
-        return Command.drop;
-      default:
-        throw ArgumentError('Unknown command: $text');
+  
+  String _extractString(String quotedString) {
+    // Remove surrounding quotes and handle escape sequences
+    if (quotedString.startsWith('"') && quotedString.endsWith('"')) {
+      return quotedString.substring(1, quotedString.length - 1)
+          .replaceAll('\\"', '"');
     }
+    return quotedString;
   }
 }

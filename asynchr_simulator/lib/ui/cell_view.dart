@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import '../model/actor_state.dart';
 import '../model/world_state.dart';
+import '../ast/ast.dart';
 
 class CellView extends StatelessWidget {
   final int x;
@@ -89,15 +91,16 @@ class CellView extends StatelessWidget {
     );
   }
 
-  IconData _directionIcon(FacingDirection dir) {
+  // Обновленный метод для использования Direction из AST вместо FacingDirection
+  IconData _directionIcon(Direction dir) {
     switch (dir) {
-      case FacingDirection.up:
+      case Direction.up:
         return Icons.arrow_upward;
-      case FacingDirection.down:
+      case Direction.down:
         return Icons.arrow_downward;
-      case FacingDirection.left:
+      case Direction.left:
         return Icons.arrow_back;
-      case FacingDirection.right:
+      case Direction.right:
         return Icons.arrow_forward;
     }
   }

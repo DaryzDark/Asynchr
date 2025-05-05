@@ -30,12 +30,39 @@ class NumberData extends QueryData {
   String toString() => 'Number($value)';
 }
 
+class StringData extends QueryData {
+  final String value;
+  
+  StringData(this.value);
+  
+  @override
+  String toString() => 'String("$value")';
+}
+
 class PositionData extends QueryData {
   final Position position;
 
   PositionData(this.position);
 
   @override
-  String toString() => 'PositionData($position)';
+  String toString() => 'Position($position)';
+}
+
+class PositionGroupData extends QueryData {
+  final List<Position> positions;
+  
+  PositionGroupData(this.positions);
+  
+  @override
+  String toString() => 'Positions(${positions.join(', ')})';
+}
+
+class ThreadStatusData extends QueryData {
+  final String threadId;
+  
+  ThreadStatusData(this.threadId);
+  
+  @override
+  String toString() => 'ThreadStatus("$threadId")';
 }
 

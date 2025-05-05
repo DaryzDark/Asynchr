@@ -140,11 +140,11 @@ class AsynchrGrammarBaseListener implements AsynchrGrammarListener {
 
   /// The default implementation does nothing.
   @override
-  void enterWaitAction(WaitActionContext ctx) {}
+  void enterWaitOther(WaitOtherContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitWaitAction(WaitActionContext ctx) {}
+  void exitWaitOther(WaitOtherContext ctx) {}
 
   /// The default implementation does nothing.
   @override
@@ -156,43 +156,91 @@ class AsynchrGrammarBaseListener implements AsynchrGrammarListener {
 
   /// The default implementation does nothing.
   @override
-  void enterCommand(CommandContext ctx) {}
+  void enterStepCmd(StepCmdContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitCommand(CommandContext ctx) {}
+  void exitStepCmd(StepCmdContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterCondition(ConditionContext ctx) {}
+  void enterTurnLeftCmd(TurnLeftCmdContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitCondition(ConditionContext ctx) {}
+  void exitTurnLeftCmd(TurnLeftCmdContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterQuery_block(Query_blockContext ctx) {}
+  void enterTurnRightCmd(TurnRightCmdContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitQuery_block(Query_blockContext ctx) {}
+  void exitTurnRightCmd(TurnRightCmdContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterQuery_statement(Query_statementContext ctx) {}
+  void enterPickUpCmd(PickUpCmdContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitQuery_statement(Query_statementContext ctx) {}
+  void exitPickUpCmd(PickUpCmdContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterData(DataContext ctx) {}
+  void enterDropCmd(DropCmdContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitData(DataContext ctx) {}
+  void exitDropCmd(DropCmdContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterPauseCmd(PauseCmdContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitPauseCmd(PauseCmdContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterSendCmd(SendCmdContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitSendCmd(SendCmdContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterRecvCmd(RecvCmdContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitRecvCmd(RecvCmdContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterHasMsgCond(HasMsgCondContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitHasMsgCond(HasMsgCondContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterIdentifierCond(IdentifierCondContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitIdentifierCond(IdentifierCondContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterPositionCond(PositionCondContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitPositionCond(PositionCondContext ctx) {}
 
   /// The default implementation does nothing.
   @override

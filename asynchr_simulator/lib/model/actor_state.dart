@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-
-enum FacingDirection { up, down, left, right }
+import '../ast/ast.dart';
+import 'dart:ui' as ui;
 
 class ActorState {
   final String name;
-  Offset position;
-  FacingDirection direction;
+  ui.Offset position;
+  Direction direction;
   bool carryingBox;
 
   ActorState({
@@ -15,30 +15,45 @@ class ActorState {
     this.carryingBox = false,
   });
 
+  // Конвертация из AST Position в Flutter Offset
+  ActorState.fromAst({
+    required this.name,
+    required Position astPosition, 
+    required Direction astDirection,
+  }) : 
+    position = ui.Offset(astPosition.x.toDouble(), astPosition.y.toDouble()),
+    direction = astDirection,
+    carryingBox = false;
+
   void turnLeft() {
     direction = switch (direction) {
-      FacingDirection.up => FacingDirection.left,
-      FacingDirection.left => FacingDirection.down,
-      FacingDirection.down => FacingDirection.right,
-      FacingDirection.right => FacingDirection.up,
+      Direction.up => Direction.left,
+      Direction.left => Direction.down,
+      Direction.down => Direction.right,
+      Direction.right => Direction.up,
     };
   }
 
   void turnRight() {
     direction = switch (direction) {
-      FacingDirection.up => FacingDirection.right,
-      FacingDirection.right => FacingDirection.down,
-      FacingDirection.down => FacingDirection.left,
-      FacingDirection.left => FacingDirection.up,
+      Direction.up => Direction.right,
+      Direction.right => Direction.down,
+      Direction.down => Direction.left,
+      Direction.left => Direction.up,
     };
   }
 
-  Offset nextPosition() {
+  ui.Offset nextPosition() {
     return switch (direction) {
-      FacingDirection.up => position.translate(0, -1),
-      FacingDirection.down => position.translate(0, 1),
-      FacingDirection.left => position.translate(-1, 0),
-      FacingDirection.right => position.translate(1, 0),
+      Direction.up => position.translate(0, -1),
+      Direction.down => position.translate(0, 1),
+      Direction.left => position.translate(-1, 0),
+      Direction.right => position.translate(1, 0),
     };
+  }
+
+  // Преобразование в AST Position
+  Position toAstPosition() {
+    return Position(position.dx.toInt(), position.dy.toInt());
   }
 }

@@ -125,14 +125,14 @@ abstract class AsynchrGrammarListener extends ParseTreeListener {
   /// [ctx] the parse tree
   void exitConditional(ConditionalContext ctx);
 
-  /// Enter a parse tree produced by the [WaitAction]
+  /// Enter a parse tree produced by the [WaitOther]
   /// labeled alternative in [file.parserName>.action].
   /// [ctx] the parse tree
-  void enterWaitAction(WaitActionContext ctx);
-  /// Exit a parse tree produced by the [WaitAction]
+  void enterWaitOther(WaitOtherContext ctx);
+  /// Exit a parse tree produced by the [WaitOther]
   /// labeled alternative in [AsynchrGrammarParser.action].
   /// [ctx] the parse tree
-  void exitWaitAction(WaitActionContext ctx);
+  void exitWaitOther(WaitOtherContext ctx);
 
   /// Enter a parse tree produced by the [SimpleAction]
   /// labeled alternative in [file.parserName>.action].
@@ -143,38 +143,102 @@ abstract class AsynchrGrammarListener extends ParseTreeListener {
   /// [ctx] the parse tree
   void exitSimpleAction(SimpleActionContext ctx);
 
-  /// Enter a parse tree produced by [AsynchrGrammarParser.command].
+  /// Enter a parse tree produced by the [StepCmd]
+  /// labeled alternative in [file.parserName>.command].
   /// [ctx] the parse tree
-  void enterCommand(CommandContext ctx);
-  /// Exit a parse tree produced by [AsynchrGrammarParser.command].
+  void enterStepCmd(StepCmdContext ctx);
+  /// Exit a parse tree produced by the [StepCmd]
+  /// labeled alternative in [AsynchrGrammarParser.command].
   /// [ctx] the parse tree
-  void exitCommand(CommandContext ctx);
+  void exitStepCmd(StepCmdContext ctx);
 
-  /// Enter a parse tree produced by [AsynchrGrammarParser.condition].
+  /// Enter a parse tree produced by the [TurnLeftCmd]
+  /// labeled alternative in [file.parserName>.command].
   /// [ctx] the parse tree
-  void enterCondition(ConditionContext ctx);
-  /// Exit a parse tree produced by [AsynchrGrammarParser.condition].
+  void enterTurnLeftCmd(TurnLeftCmdContext ctx);
+  /// Exit a parse tree produced by the [TurnLeftCmd]
+  /// labeled alternative in [AsynchrGrammarParser.command].
   /// [ctx] the parse tree
-  void exitCondition(ConditionContext ctx);
+  void exitTurnLeftCmd(TurnLeftCmdContext ctx);
 
-  /// Enter a parse tree produced by [AsynchrGrammarParser.query_block].
+  /// Enter a parse tree produced by the [TurnRightCmd]
+  /// labeled alternative in [file.parserName>.command].
   /// [ctx] the parse tree
-  void enterQuery_block(Query_blockContext ctx);
-  /// Exit a parse tree produced by [AsynchrGrammarParser.query_block].
+  void enterTurnRightCmd(TurnRightCmdContext ctx);
+  /// Exit a parse tree produced by the [TurnRightCmd]
+  /// labeled alternative in [AsynchrGrammarParser.command].
   /// [ctx] the parse tree
-  void exitQuery_block(Query_blockContext ctx);
+  void exitTurnRightCmd(TurnRightCmdContext ctx);
 
-  /// Enter a parse tree produced by [AsynchrGrammarParser.query_statement].
+  /// Enter a parse tree produced by the [PickUpCmd]
+  /// labeled alternative in [file.parserName>.command].
   /// [ctx] the parse tree
-  void enterQuery_statement(Query_statementContext ctx);
-  /// Exit a parse tree produced by [AsynchrGrammarParser.query_statement].
+  void enterPickUpCmd(PickUpCmdContext ctx);
+  /// Exit a parse tree produced by the [PickUpCmd]
+  /// labeled alternative in [AsynchrGrammarParser.command].
   /// [ctx] the parse tree
-  void exitQuery_statement(Query_statementContext ctx);
+  void exitPickUpCmd(PickUpCmdContext ctx);
 
-  /// Enter a parse tree produced by [AsynchrGrammarParser.data].
+  /// Enter a parse tree produced by the [DropCmd]
+  /// labeled alternative in [file.parserName>.command].
   /// [ctx] the parse tree
-  void enterData(DataContext ctx);
-  /// Exit a parse tree produced by [AsynchrGrammarParser.data].
+  void enterDropCmd(DropCmdContext ctx);
+  /// Exit a parse tree produced by the [DropCmd]
+  /// labeled alternative in [AsynchrGrammarParser.command].
   /// [ctx] the parse tree
-  void exitData(DataContext ctx);
+  void exitDropCmd(DropCmdContext ctx);
+
+  /// Enter a parse tree produced by the [PauseCmd]
+  /// labeled alternative in [file.parserName>.command].
+  /// [ctx] the parse tree
+  void enterPauseCmd(PauseCmdContext ctx);
+  /// Exit a parse tree produced by the [PauseCmd]
+  /// labeled alternative in [AsynchrGrammarParser.command].
+  /// [ctx] the parse tree
+  void exitPauseCmd(PauseCmdContext ctx);
+
+  /// Enter a parse tree produced by the [SendCmd]
+  /// labeled alternative in [file.parserName>.command].
+  /// [ctx] the parse tree
+  void enterSendCmd(SendCmdContext ctx);
+  /// Exit a parse tree produced by the [SendCmd]
+  /// labeled alternative in [AsynchrGrammarParser.command].
+  /// [ctx] the parse tree
+  void exitSendCmd(SendCmdContext ctx);
+
+  /// Enter a parse tree produced by the [RecvCmd]
+  /// labeled alternative in [file.parserName>.command].
+  /// [ctx] the parse tree
+  void enterRecvCmd(RecvCmdContext ctx);
+  /// Exit a parse tree produced by the [RecvCmd]
+  /// labeled alternative in [AsynchrGrammarParser.command].
+  /// [ctx] the parse tree
+  void exitRecvCmd(RecvCmdContext ctx);
+
+  /// Enter a parse tree produced by the [HasMsgCond]
+  /// labeled alternative in [file.parserName>.condition].
+  /// [ctx] the parse tree
+  void enterHasMsgCond(HasMsgCondContext ctx);
+  /// Exit a parse tree produced by the [HasMsgCond]
+  /// labeled alternative in [AsynchrGrammarParser.condition].
+  /// [ctx] the parse tree
+  void exitHasMsgCond(HasMsgCondContext ctx);
+
+  /// Enter a parse tree produced by the [IdentifierCond]
+  /// labeled alternative in [file.parserName>.condition].
+  /// [ctx] the parse tree
+  void enterIdentifierCond(IdentifierCondContext ctx);
+  /// Exit a parse tree produced by the [IdentifierCond]
+  /// labeled alternative in [AsynchrGrammarParser.condition].
+  /// [ctx] the parse tree
+  void exitIdentifierCond(IdentifierCondContext ctx);
+
+  /// Enter a parse tree produced by the [PositionCond]
+  /// labeled alternative in [file.parserName>.condition].
+  /// [ctx] the parse tree
+  void enterPositionCond(PositionCondContext ctx);
+  /// Exit a parse tree produced by the [PositionCond]
+  /// labeled alternative in [AsynchrGrammarParser.condition].
+  /// [ctx] the parse tree
+  void exitPositionCond(PositionCondContext ctx);
 }
