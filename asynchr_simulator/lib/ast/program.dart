@@ -1,30 +1,35 @@
-import 'context.dart';
-import 'behavior.dart';
-import 'query.dart';
 import 'ast_node.dart';
+import 'context.dart';
+import 'ast.dart';
 
+/// Представление программы Asynchr
 class Program extends AstNode {
-  final ContextBlock context;
-  final BehaviorBlock? behavior;
-  final AsyncBlock? async;
-  final QueryBlock? query;
+  final Context context;
+  final List<ThreadSet> threadSets;
+  final String? resultId;
 
-  Program({
-    required this.context,
-    this.behavior,
-    this.async,
-    this.query,
-  });
+  Program(this.context, this.threadSets, {this.resultId});
 
   @override
   String toString() {
     final buffer = StringBuffer();
-    buffer.writeln('Program(');
-    buffer.writeln('  Context: $context,');
-    if (behavior != null) buffer.writeln('  Behavior: $behavior,');
-    if (async != null) buffer.writeln('  Async: $async,');
-    if (query != null) buffer.writeln('  Query: $query,');
+    buffer.write('Program(\n');
+    buffer.write('  context: $context,\n');
+    buffer.write('  threadSets: [\n');
+    
+    for (var threadSet in threadSets) {
+      // Indent the thread set representation
+      final threadSetStr = threadSet.toString().split('\n')
+          .map((line) => '    $line').join('\n');
+      buffer.write('$threadSetStr,\n');
+    }
+    
+    buffer.write('  ],\n');
+    if (resultId != null) {
+      buffer.write('  resultId: $resultId\n');
+    }
     buffer.write(')');
+    
     return buffer.toString();
   }
 }

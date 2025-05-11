@@ -78,7 +78,7 @@ class WorldState {
             name: e.value.name,
             position: e.value.position,
             direction: e.value.direction,
-            carryingBox: e.value.carryingBox,
+            boxesCarrying: e.value.boxesCarrying,  // Исправлено с carryingBox на boxesCarrying
           ),
         ),
       )),

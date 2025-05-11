@@ -68,6 +68,14 @@ class AsynchrGrammarBaseListener implements AsynchrGrammarListener {
 
   /// The default implementation does nothing.
   @override
+  void enterDirection(DirectionContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitDirection(DirectionContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
   void enterPosition_group(Position_groupContext ctx) {}
 
   /// The default implementation does nothing.
@@ -84,27 +92,27 @@ class AsynchrGrammarBaseListener implements AsynchrGrammarListener {
 
   /// The default implementation does nothing.
   @override
-  void enterDirection(DirectionContext ctx) {}
+  void enterSet_block(Set_blockContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitDirection(DirectionContext ctx) {}
+  void exitSet_block(Set_blockContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterBehavior_block(Behavior_blockContext ctx) {}
+  void enterThread(ThreadContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitBehavior_block(Behavior_blockContext ctx) {}
+  void exitThread(ThreadContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterBehavior_statement(Behavior_statementContext ctx) {}
+  void enterFold_op(Fold_opContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitBehavior_statement(Behavior_statementContext ctx) {}
+  void exitFold_op(Fold_opContext ctx) {}
 
   /// The default implementation does nothing.
   @override
@@ -140,107 +148,147 @@ class AsynchrGrammarBaseListener implements AsynchrGrammarListener {
 
   /// The default implementation does nothing.
   @override
-  void enterWaitOther(WaitOtherContext ctx) {}
+  void enterSimpleCmd(SimpleCmdContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitWaitOther(WaitOtherContext ctx) {}
+  void exitSimpleCmd(SimpleCmdContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterSimpleAction(SimpleActionContext ctx) {}
+  void enterBlock(BlockContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitSimpleAction(SimpleActionContext ctx) {}
+  void exitBlock(BlockContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterStepCmd(StepCmdContext ctx) {}
+  void enterStepForward(StepForwardContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitStepCmd(StepCmdContext ctx) {}
+  void exitStepForward(StepForwardContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterTurnLeftCmd(TurnLeftCmdContext ctx) {}
+  void enterTurnLeft(TurnLeftContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitTurnLeftCmd(TurnLeftCmdContext ctx) {}
+  void exitTurnLeft(TurnLeftContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterTurnRightCmd(TurnRightCmdContext ctx) {}
+  void enterTurnRight(TurnRightContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitTurnRightCmd(TurnRightCmdContext ctx) {}
+  void exitTurnRight(TurnRightContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterPickUpCmd(PickUpCmdContext ctx) {}
+  void enterPickUp(PickUpContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitPickUpCmd(PickUpCmdContext ctx) {}
+  void exitPickUp(PickUpContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterDropCmd(DropCmdContext ctx) {}
+  void enterDrop(DropContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitDropCmd(DropCmdContext ctx) {}
+  void exitDrop(DropContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterPauseCmd(PauseCmdContext ctx) {}
+  void enterPause(PauseContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitPauseCmd(PauseCmdContext ctx) {}
+  void exitPause(PauseContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterSendCmd(SendCmdContext ctx) {}
+  void enterSend(SendContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitSendCmd(SendCmdContext ctx) {}
+  void exitSend(SendContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterRecvCmd(RecvCmdContext ctx) {}
+  void enterReceive(ReceiveContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitRecvCmd(RecvCmdContext ctx) {}
+  void exitReceive(ReceiveContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterHasMsgCond(HasMsgCondContext ctx) {}
+  void enterMessageCondition(MessageConditionContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitHasMsgCond(HasMsgCondContext ctx) {}
+  void exitMessageCondition(MessageConditionContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterIdentifierCond(IdentifierCondContext ctx) {}
+  void enterPathClearCondition(PathClearConditionContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitIdentifierCond(IdentifierCondContext ctx) {}
+  void exitPathClearCondition(PathClearConditionContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void enterPositionCond(PositionCondContext ctx) {}
+  void enterBoxAheadCondition(BoxAheadConditionContext ctx) {}
 
   /// The default implementation does nothing.
   @override
-  void exitPositionCond(PositionCondContext ctx) {}
+  void exitBoxAheadCondition(BoxAheadConditionContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterCarryingBoxCondition(CarryingBoxConditionContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitCarryingBoxCondition(CarryingBoxConditionContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterActorAheadCondition(ActorAheadConditionContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitActorAheadCondition(ActorAheadConditionContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterIdentifierCondition(IdentifierConditionContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitIdentifierCondition(IdentifierConditionContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterPositionCondition(PositionConditionContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitPositionCondition(PositionConditionContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterResult_expr(Result_exprContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitResult_expr(Result_exprContext ctx) {}
 
   /// The default implementation does nothing.
   @override

@@ -43,6 +43,10 @@ class AsynchrGrammarBaseVisitor<T> extends ParseTreeVisitor<T> implements Asynch
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
+  T? visitDirection(DirectionContext ctx) => visitChildren(ctx);
+  /// The default implementation returns the result of calling
+  /// [visitChildren] on [ctx].
+  @override
   T? visitPosition_group(Position_groupContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
@@ -51,15 +55,15 @@ class AsynchrGrammarBaseVisitor<T> extends ParseTreeVisitor<T> implements Asynch
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitDirection(DirectionContext ctx) => visitChildren(ctx);
+  T? visitSet_block(Set_blockContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitBehavior_block(Behavior_blockContext ctx) => visitChildren(ctx);
+  T? visitThread(ThreadContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitBehavior_statement(Behavior_statementContext ctx) => visitChildren(ctx);
+  T? visitFold_op(Fold_opContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
@@ -79,53 +83,73 @@ class AsynchrGrammarBaseVisitor<T> extends ParseTreeVisitor<T> implements Asynch
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitWaitOther(WaitOtherContext ctx) => visitChildren(ctx);
+  T? visitSimpleCmd(SimpleCmdContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitSimpleAction(SimpleActionContext ctx) => visitChildren(ctx);
+  T? visitBlock(BlockContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitStepCmd(StepCmdContext ctx) => visitChildren(ctx);
+  T? visitStepForward(StepForwardContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitTurnLeftCmd(TurnLeftCmdContext ctx) => visitChildren(ctx);
+  T? visitTurnLeft(TurnLeftContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitTurnRightCmd(TurnRightCmdContext ctx) => visitChildren(ctx);
+  T? visitTurnRight(TurnRightContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitPickUpCmd(PickUpCmdContext ctx) => visitChildren(ctx);
+  T? visitPickUp(PickUpContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitDropCmd(DropCmdContext ctx) => visitChildren(ctx);
+  T? visitDrop(DropContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitPauseCmd(PauseCmdContext ctx) => visitChildren(ctx);
+  T? visitPause(PauseContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitSendCmd(SendCmdContext ctx) => visitChildren(ctx);
+  T? visitSend(SendContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitRecvCmd(RecvCmdContext ctx) => visitChildren(ctx);
+  T? visitReceive(ReceiveContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitHasMsgCond(HasMsgCondContext ctx) => visitChildren(ctx);
+  T? visitMessageCondition(MessageConditionContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitIdentifierCond(IdentifierCondContext ctx) => visitChildren(ctx);
+  T? visitPathClearCondition(PathClearConditionContext ctx) => visitChildren(ctx);
   /// The default implementation returns the result of calling
   /// [visitChildren] on [ctx].
   @override
-  T? visitPositionCond(PositionCondContext ctx) => visitChildren(ctx);
+  T? visitBoxAheadCondition(BoxAheadConditionContext ctx) => visitChildren(ctx);
+  /// The default implementation returns the result of calling
+  /// [visitChildren] on [ctx].
+  @override
+  T? visitCarryingBoxCondition(CarryingBoxConditionContext ctx) => visitChildren(ctx);
+  /// The default implementation returns the result of calling
+  /// [visitChildren] on [ctx].
+  @override
+  T? visitActorAheadCondition(ActorAheadConditionContext ctx) => visitChildren(ctx);
+  /// The default implementation returns the result of calling
+  /// [visitChildren] on [ctx].
+  @override
+  T? visitIdentifierCondition(IdentifierConditionContext ctx) => visitChildren(ctx);
+  /// The default implementation returns the result of calling
+  /// [visitChildren] on [ctx].
+  @override
+  T? visitPositionCondition(PositionConditionContext ctx) => visitChildren(ctx);
+  /// The default implementation returns the result of calling
+  /// [visitChildren] on [ctx].
+  @override
+  T? visitResult_expr(Result_exprContext ctx) => visitChildren(ctx);
 }

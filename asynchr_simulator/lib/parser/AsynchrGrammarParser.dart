@@ -8,9 +8,10 @@ import 'AsynchrGrammarVisitor.dart';
 import 'AsynchrGrammarBaseVisitor.dart';
 const int RULE_program = 0, RULE_context_block = 1, RULE_context_statement = 2, 
           RULE_board_def = 3, RULE_wall_def = 4, RULE_box_def = 5, RULE_actor_def = 6, 
-          RULE_position_group = 7, RULE_position = 8, RULE_direction = 9, 
-          RULE_behavior_block = 10, RULE_behavior_statement = 11, RULE_action_list = 12, 
-          RULE_action = 13, RULE_command = 14, RULE_condition = 15;
+          RULE_direction = 7, RULE_position_group = 8, RULE_position = 9, 
+          RULE_set_block = 10, RULE_thread = 11, RULE_fold_op = 12, RULE_action_list = 13, 
+          RULE_action = 14, RULE_block = 15, RULE_command = 16, RULE_condition = 17, 
+          RULE_result_expr = 18;
 class AsynchrGrammarParser extends Parser {
   static final checkVersion = () => RuntimeMetaData.checkVersion('4.13.2', RuntimeMetaData.VERSION);
   static const int TOKEN_EOF = IntStream.EOF;
@@ -25,42 +26,52 @@ class AsynchrGrammarParser extends Parser {
                    TOKEN_T__15 = 16, TOKEN_T__16 = 17, TOKEN_T__17 = 18, 
                    TOKEN_T__18 = 19, TOKEN_T__19 = 20, TOKEN_T__20 = 21, 
                    TOKEN_T__21 = 22, TOKEN_T__22 = 23, TOKEN_T__23 = 24, 
-                   TOKEN_T__24 = 25, TOKEN_ID = 26, TOKEN_NUMBER = 27, TOKEN_STRING = 28, 
-                   TOKEN_LPAREN = 29, TOKEN_RPAREN = 30, TOKEN_LBRACE = 31, 
-                   TOKEN_RBRACE = 32, TOKEN_COMMA = 33, TOKEN_SEMI = 34, 
-                   TOKEN_EQ = 35, TOKEN_STAR = 36, TOKEN_WS = 37, TOKEN_COMMENT = 38;
+                   TOKEN_T__24 = 25, TOKEN_T__25 = 26, TOKEN_T__26 = 27, 
+                   TOKEN_T__27 = 28, TOKEN_T__28 = 29, TOKEN_T__29 = 30, 
+                   TOKEN_T__30 = 31, TOKEN_T__31 = 32, TOKEN_ID = 33, TOKEN_NUMBER = 34, 
+                   TOKEN_STRING = 35, TOKEN_LPAREN = 36, TOKEN_RPAREN = 37, 
+                   TOKEN_LBRACE = 38, TOKEN_RBRACE = 39, TOKEN_COMMA = 40, 
+                   TOKEN_SEMI = 41, TOKEN_EQ = 42, TOKEN_PLUS = 43, TOKEN_STAR = 44, 
+                   TOKEN_ARROW = 45, TOKEN_WS = 46, TOKEN_COMMENT = 47;
 
   @override
   final List<String> ruleNames = [
     'program', 'context_block', 'context_statement', 'board_def', 'wall_def', 
-    'box_def', 'actor_def', 'position_group', 'position', 'direction', 'behavior_block', 
-    'behavior_statement', 'action_list', 'action', 'command', 'condition'
+    'box_def', 'actor_def', 'direction', 'position_group', 'position', 'set_block', 
+    'thread', 'fold_op', 'action_list', 'action', 'block', 'command', 'condition', 
+    'result_expr'
   ];
 
   static final List<String?> _LITERAL_NAMES = [
       null, "'\\u0414\\u043E\\u0441\\u043A\\u0430'", "'\\u0421\\u0442\\u0435\\u043D\\u044B'", 
       "'\\u041A\\u043E\\u0440\\u043E\\u0431\\u043A\\u0438'", "'\\u0412\\u0412\\u0415\\u0420\\u0425'", 
       "'\\u0412\\u041D\\u0418\\u0417'", "'\\u0412\\u041B\\u0415\\u0412\\u041E'", 
-      "'\\u0412\\u041F\\u0420\\u0410\\u0412\\u041E'", "'\\u0414\\u043B\\u044F'", 
-      "'\\u0426\\u0418\\u041A\\u041B'", "'\\u041F\\u041E\\u041A\\u0410'", 
-      "'\\u041F\\u041E\\u0412\\u0422\\u041E\\u0420\\u0418\\u0422\\u042C'", 
+      "'\\u0412\\u041F\\u0420\\u0410\\u0412\\u041E'", "'\\u041D\\u0430\\u0431\\u043E\\u0440'", 
+      "'\\u041C\\u0418\\u041D'", "'\\u041C\\u0410\\u041A\\u0421'", "'\\u0414\\u041B\\u0418\\u041D\\u0410'", 
+      "'\\u041F\\u0415\\u0420\\u0412\\u042B\\u0419'", "'\\u041F\\u041E\\u0421\\u041B\\u0415\\u0414\\u041D\\u0418\\u0419'", 
+      "'\\u041F\\u041E\\u041A\\u0410'", "'\\u041F\\u041E\\u0412\\u0422\\u041E\\u0420\\u0418\\u0422\\u042C'", 
       "'\\u0415\\u0421\\u041B\\u0418'", "'\\u0422\\u041E'", "'\\u0418\\u041D\\u0410\\u0427\\u0415'", 
-      "'\\u0416\\u0414\\u0410\\u0422\\u042C'", "'\\u0428\\u0430\\u0433 \\u0412\\u043F\\u0435\\u0440\\u0451\\u0434'", 
-      "'\\u041F\\u043E\\u0432\\u0435\\u0440\\u043D\\u0443\\u0442\\u044C \\u0412\\u043B\\u0435\\u0432\\u043E'", 
-      "'\\u041F\\u043E\\u0432\\u0435\\u0440\\u043D\\u0443\\u0442\\u044C \\u0412\\u043F\\u0440\\u0430\\u0432\\u043E'", 
-      "'\\u041F\\u043E\\u0434\\u043D\\u044F\\u0442\\u044C_\\u043A\\u043E\\u0440\\u043E\\u0431\\u043A\\u0443'", 
-      "'\\u041E\\u043F\\u0443\\u0441\\u0442\\u0438\\u0442\\u044C_\\u043A\\u043E\\u0440\\u043E\\u0431\\u043A\\u0443'", 
+      "'\\u0428\\u0430\\u0433_\\u0412\\u043F\\u0435\\u0440\\u0435\\u0434'", 
+      "'\\u041F\\u043E\\u0432\\u0435\\u0440\\u043D\\u0443\\u0442\\u044C_\\u0412\\u043B\\u0435\\u0432\\u043E'", 
+      "'\\u041F\\u043E\\u0432\\u0435\\u0440\\u043D\\u0443\\u0442\\u044C_\\u0412\\u043F\\u0440\\u0430\\u0432\\u043E'", 
+      "'\\u041F\\u043E\\u0434\\u043D\\u044F\\u0442\\u044C_\\u041A\\u043E\\u0440\\u043E\\u0431\\u043A\\u0443'", 
+      "'\\u041E\\u043F\\u0443\\u0441\\u0442\\u0438\\u0442\\u044C_\\u041A\\u043E\\u0440\\u043E\\u0431\\u043A\\u0443'", 
       "'\\u041F\\u0410\\u0423\\u0417\\u0410'", "'\\u041E\\u0422\\u041F\\u0420\\u0410\\u0412\\u0418\\u0422\\u042C'", 
-      "'->'", "'\\u041F\\u041E\\u041B\\u0423\\u0427\\u0418\\u0422\\u042C'", 
-      "'\\u0421\\u041E\\u041E\\u0411\\u0429\\u0415\\u041D\\u0418\\u0415?'", 
+      "'\\u041F\\u041E\\u041B\\u0423\\u0427\\u0418\\u0422\\u042C'", "'\\u0421\\u041E\\u041E\\u0411\\u0429\\u0415\\u041D\\u0418\\u0415?'", 
+      "'\\u0412\\u043F\\u0435\\u0440\\u0435\\u0434\\u0438_\\u0421\\u0432\\u043E\\u0431\\u043E\\u0434\\u043D\\u043E'", 
+      "'\\u0415\\u0441\\u0442\\u044C_\\u041A\\u043E\\u0440\\u043E\\u0431\\u043A\\u0430_\\u0412\\u043F\\u0435\\u0440\\u0435\\u0434\\u0438'", 
+      "'\\u041D\\u0435\\u0441\\u0443_\\u041A\\u043E\\u0440\\u043E\\u0431\\u043A\\u0443'", 
+      "'\\u041A\\u043E\\u043B\\u043B\\u0435\\u0433\\u0430_\\u0412\\u043F\\u0435\\u0440\\u0435\\u0434\\u0438'", 
+      "'\\u0420\\u0415\\u0417\\u0423\\u041B\\u042C\\u0422\\u0410\\u0422'", 
       null, null, null, "'('", "')'", "'{'", "'}'", "','", "';'", "'='", 
-      "'*'"
+      "'+'", "'*'", "'->'"
   ];
   static final List<String?> _SYMBOLIC_NAMES = [
       null, null, null, null, null, null, null, null, null, null, null, 
       null, null, null, null, null, null, null, null, null, null, null, 
-      null, null, null, null, "ID", "NUMBER", "STRING", "LPAREN", "RPAREN", 
-      "LBRACE", "RBRACE", "COMMA", "SEMI", "EQ", "STAR", "WS", "COMMENT"
+      null, null, null, null, null, null, null, null, null, null, null, 
+      "ID", "NUMBER", "STRING", "LPAREN", "RPAREN", "LBRACE", "RBRACE", 
+      "COMMA", "SEMI", "EQ", "PLUS", "STAR", "ARROW", "WS", "COMMENT"
   ];
   static final Vocabulary VOCABULARY = VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -87,13 +98,36 @@ class AsynchrGrammarParser extends Parser {
   ProgramContext program() {
     dynamic _localctx = ProgramContext(context, state);
     enterRule(_localctx, 0, RULE_program);
+    int _la;
     try {
       enterOuterAlt(_localctx, 1);
-      state = 32;
-      context_block();
-      state = 33;
-      behavior_block();
-      state = 34;
+      state = 39;
+      errorHandler.sync(this);
+      _la = tokenStream.LA(1)!;
+      if ((((_la) & ~0x3f) == 0 && ((1 << _la) & 8589934606) != 0)) {
+        state = 38;
+        context_block();
+      }
+
+      state = 44;
+      errorHandler.sync(this);
+      _la = tokenStream.LA(1)!;
+      while (_la == TOKEN_T__7) {
+        state = 41;
+        set_block();
+        state = 46;
+        errorHandler.sync(this);
+        _la = tokenStream.LA(1)!;
+      }
+      state = 48;
+      errorHandler.sync(this);
+      _la = tokenStream.LA(1)!;
+      if (_la == TOKEN_T__31) {
+        state = 47;
+        result_expr();
+      }
+
+      state = 50;
       match(TOKEN_EOF);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -111,16 +145,16 @@ class AsynchrGrammarParser extends Parser {
     int _la;
     try {
       enterOuterAlt(_localctx, 1);
-      state = 37; 
+      state = 53; 
       errorHandler.sync(this);
       _la = tokenStream.LA(1)!;
       do {
-        state = 36;
+        state = 52;
         context_statement();
-        state = 39; 
+        state = 55; 
         errorHandler.sync(this);
         _la = tokenStream.LA(1)!;
-      } while ((((_la) & ~0x3f) == 0 && ((1 << _la) & 67108878) != 0));
+      } while ((((_la) & ~0x3f) == 0 && ((1 << _la) & 8589934606) != 0));
     } on RecognitionException catch (re) {
       _localctx.exception = re;
       errorHandler.reportError(this, re);
@@ -135,35 +169,35 @@ class AsynchrGrammarParser extends Parser {
     dynamic _localctx = Context_statementContext(context, state);
     enterRule(_localctx, 4, RULE_context_statement);
     try {
-      state = 53;
+      state = 69;
       errorHandler.sync(this);
       switch (tokenStream.LA(1)!) {
       case TOKEN_T__0:
         enterOuterAlt(_localctx, 1);
-        state = 41;
+        state = 57;
         board_def();
-        state = 42;
+        state = 58;
         match(TOKEN_SEMI);
         break;
       case TOKEN_T__1:
         enterOuterAlt(_localctx, 2);
-        state = 44;
+        state = 60;
         wall_def();
-        state = 45;
+        state = 61;
         match(TOKEN_SEMI);
         break;
       case TOKEN_T__2:
         enterOuterAlt(_localctx, 3);
-        state = 47;
+        state = 63;
         box_def();
-        state = 48;
+        state = 64;
         match(TOKEN_SEMI);
         break;
       case TOKEN_ID:
         enterOuterAlt(_localctx, 4);
-        state = 50;
+        state = 66;
         actor_def();
-        state = 51;
+        state = 67;
         match(TOKEN_SEMI);
         break;
       default:
@@ -184,15 +218,15 @@ class AsynchrGrammarParser extends Parser {
     enterRule(_localctx, 6, RULE_board_def);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 55;
+      state = 71;
       match(TOKEN_T__0);
-      state = 56;
+      state = 72;
       match(TOKEN_EQ);
-      state = 57;
+      state = 73;
       match(TOKEN_NUMBER);
-      state = 58;
+      state = 74;
       match(TOKEN_STAR);
-      state = 59;
+      state = 75;
       match(TOKEN_NUMBER);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -209,9 +243,9 @@ class AsynchrGrammarParser extends Parser {
     enterRule(_localctx, 8, RULE_wall_def);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 61;
+      state = 77;
       match(TOKEN_T__1);
-      state = 62;
+      state = 78;
       position_group();
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -228,9 +262,9 @@ class AsynchrGrammarParser extends Parser {
     enterRule(_localctx, 10, RULE_box_def);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 64;
+      state = 80;
       match(TOKEN_T__2);
-      state = 65;
+      state = 81;
       position_group();
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -247,73 +281,14 @@ class AsynchrGrammarParser extends Parser {
     enterRule(_localctx, 12, RULE_actor_def);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 67;
-      match(TOKEN_ID);
-      state = 68;
-      match(TOKEN_EQ);
-      state = 69;
-      position();
-      state = 70;
-      direction();
-    } on RecognitionException catch (re) {
-      _localctx.exception = re;
-      errorHandler.reportError(this, re);
-      errorHandler.recover(this, re);
-    } finally {
-      exitRule();
-    }
-    return _localctx;
-  }
-
-  Position_groupContext position_group() {
-    dynamic _localctx = Position_groupContext(context, state);
-    enterRule(_localctx, 14, RULE_position_group);
-    int _la;
-    try {
-      enterOuterAlt(_localctx, 1);
-      state = 72;
-      match(TOKEN_LPAREN);
-      state = 73;
-      position();
-      state = 78;
-      errorHandler.sync(this);
-      _la = tokenStream.LA(1)!;
-      while (_la == TOKEN_COMMA) {
-        state = 74;
-        match(TOKEN_COMMA);
-        state = 75;
-        position();
-        state = 80;
-        errorHandler.sync(this);
-        _la = tokenStream.LA(1)!;
-      }
-      state = 81;
-      match(TOKEN_RPAREN);
-    } on RecognitionException catch (re) {
-      _localctx.exception = re;
-      errorHandler.reportError(this, re);
-      errorHandler.recover(this, re);
-    } finally {
-      exitRule();
-    }
-    return _localctx;
-  }
-
-  PositionContext position() {
-    dynamic _localctx = PositionContext(context, state);
-    enterRule(_localctx, 16, RULE_position);
-    try {
-      enterOuterAlt(_localctx, 1);
       state = 83;
-      match(TOKEN_LPAREN);
+      match(TOKEN_ID);
       state = 84;
-      match(TOKEN_NUMBER);
+      match(TOKEN_EQ);
       state = 85;
-      match(TOKEN_COMMA);
+      position();
       state = 86;
-      match(TOKEN_NUMBER);
-      state = 87;
-      match(TOKEN_RPAREN);
+      direction();
     } on RecognitionException catch (re) {
       _localctx.exception = re;
       errorHandler.reportError(this, re);
@@ -326,11 +301,11 @@ class AsynchrGrammarParser extends Parser {
 
   DirectionContext direction() {
     dynamic _localctx = DirectionContext(context, state);
-    enterRule(_localctx, 18, RULE_direction);
+    enterRule(_localctx, 14, RULE_direction);
     int _la;
     try {
       enterOuterAlt(_localctx, 1);
-      state = 89;
+      state = 88;
       _la = tokenStream.LA(1)!;
       if (!((((_la) & ~0x3f) == 0 && ((1 << _la) & 240) != 0))) {
       errorHandler.recoverInline(this);
@@ -349,22 +324,30 @@ class AsynchrGrammarParser extends Parser {
     return _localctx;
   }
 
-  Behavior_blockContext behavior_block() {
-    dynamic _localctx = Behavior_blockContext(context, state);
-    enterRule(_localctx, 20, RULE_behavior_block);
+  Position_groupContext position_group() {
+    dynamic _localctx = Position_groupContext(context, state);
+    enterRule(_localctx, 16, RULE_position_group);
     int _la;
     try {
       enterOuterAlt(_localctx, 1);
-      state = 92; 
+      state = 90;
+      match(TOKEN_LPAREN);
+      state = 91;
+      position();
+      state = 96;
       errorHandler.sync(this);
       _la = tokenStream.LA(1)!;
-      do {
-        state = 91;
-        behavior_statement();
-        state = 94; 
+      while (_la == TOKEN_COMMA) {
+        state = 92;
+        match(TOKEN_COMMA);
+        state = 93;
+        position();
+        state = 98;
         errorHandler.sync(this);
         _la = tokenStream.LA(1)!;
-      } while (_la == TOKEN_T__7);
+      }
+      state = 99;
+      match(TOKEN_RPAREN);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
       errorHandler.reportError(this, re);
@@ -375,25 +358,134 @@ class AsynchrGrammarParser extends Parser {
     return _localctx;
   }
 
-  Behavior_statementContext behavior_statement() {
-    dynamic _localctx = Behavior_statementContext(context, state);
-    enterRule(_localctx, 22, RULE_behavior_statement);
+  PositionContext position() {
+    dynamic _localctx = PositionContext(context, state);
+    enterRule(_localctx, 18, RULE_position);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 96;
-      match(TOKEN_T__7);
-      state = 97;
-      match(TOKEN_ID);
-      state = 98;
-      match(TOKEN_EQ);
-      state = 99;
-      match(TOKEN_LBRACE);
-      state = 100;
-      action_list();
       state = 101;
-      match(TOKEN_RBRACE);
+      match(TOKEN_LPAREN);
       state = 102;
+      match(TOKEN_NUMBER);
+      state = 103;
+      match(TOKEN_COMMA);
+      state = 104;
+      match(TOKEN_NUMBER);
+      state = 105;
+      match(TOKEN_RPAREN);
+    } on RecognitionException catch (re) {
+      _localctx.exception = re;
+      errorHandler.reportError(this, re);
+      errorHandler.recover(this, re);
+    } finally {
+      exitRule();
+    }
+    return _localctx;
+  }
+
+  Set_blockContext set_block() {
+    dynamic _localctx = Set_blockContext(context, state);
+    enterRule(_localctx, 20, RULE_set_block);
+    int _la;
+    try {
+      enterOuterAlt(_localctx, 1);
+      state = 107;
+      match(TOKEN_T__7);
+      state = 110;
+      errorHandler.sync(this);
+      _la = tokenStream.LA(1)!;
+      if (_la == TOKEN_ID) {
+        state = 108;
+        match(TOKEN_ID);
+        state = 109;
+        match(TOKEN_EQ);
+      }
+
+      state = 112;
+      match(TOKEN_LPAREN);
+      state = 113;
+      thread();
+      state = 118;
+      errorHandler.sync(this);
+      _la = tokenStream.LA(1)!;
+      while (_la == TOKEN_COMMA) {
+        state = 114;
+        match(TOKEN_COMMA);
+        state = 115;
+        thread();
+        state = 120;
+        errorHandler.sync(this);
+        _la = tokenStream.LA(1)!;
+      }
+      state = 121;
+      match(TOKEN_RPAREN);
+      state = 123;
+      errorHandler.sync(this);
+      _la = tokenStream.LA(1)!;
+      if ((((_la) & ~0x3f) == 0 && ((1 << _la) & 26388279082496) != 0)) {
+        state = 122;
+        fold_op();
+      }
+
+      state = 125;
       match(TOKEN_SEMI);
+    } on RecognitionException catch (re) {
+      _localctx.exception = re;
+      errorHandler.reportError(this, re);
+      errorHandler.recover(this, re);
+    } finally {
+      exitRule();
+    }
+    return _localctx;
+  }
+
+  ThreadContext thread() {
+    dynamic _localctx = ThreadContext(context, state);
+    enterRule(_localctx, 22, RULE_thread);
+    int _la;
+    try {
+      enterOuterAlt(_localctx, 1);
+      state = 129;
+      errorHandler.sync(this);
+      _la = tokenStream.LA(1)!;
+      if (_la == TOKEN_ID) {
+        state = 127;
+        match(TOKEN_ID);
+        state = 128;
+        match(TOKEN_EQ);
+      }
+
+      state = 131;
+      match(TOKEN_LBRACE);
+      state = 132;
+      action_list();
+      state = 133;
+      match(TOKEN_RBRACE);
+    } on RecognitionException catch (re) {
+      _localctx.exception = re;
+      errorHandler.reportError(this, re);
+      errorHandler.recover(this, re);
+    } finally {
+      exitRule();
+    }
+    return _localctx;
+  }
+
+  Fold_opContext fold_op() {
+    dynamic _localctx = Fold_opContext(context, state);
+    enterRule(_localctx, 24, RULE_fold_op);
+    int _la;
+    try {
+      enterOuterAlt(_localctx, 1);
+      state = 135;
+      _la = tokenStream.LA(1)!;
+      if (!((((_la) & ~0x3f) == 0 && ((1 << _la) & 26388279082496) != 0))) {
+      errorHandler.recoverInline(this);
+      } else {
+        if ( tokenStream.LA(1)! == IntStream.EOF ) matchedEOF = true;
+        errorHandler.reportMatch(this);
+        consume();
+      }
     } on RecognitionException catch (re) {
       _localctx.exception = re;
       errorHandler.reportError(this, re);
@@ -406,21 +498,21 @@ class AsynchrGrammarParser extends Parser {
 
   Action_listContext action_list() {
     dynamic _localctx = Action_listContext(context, state);
-    enterRule(_localctx, 24, RULE_action_list);
+    enterRule(_localctx, 26, RULE_action_list);
     int _la;
     try {
       enterOuterAlt(_localctx, 1);
-      state = 104;
+      state = 137;
       action_();
-      state = 109;
+      state = 142;
       errorHandler.sync(this);
       _la = tokenStream.LA(1)!;
       while (_la == TOKEN_SEMI) {
-        state = 105;
+        state = 138;
         match(TOKEN_SEMI);
-        state = 106;
+        state = 139;
         action_();
-        state = 111;
+        state = 144;
         errorHandler.sync(this);
         _la = tokenStream.LA(1)!;
       }
@@ -436,81 +528,115 @@ class AsynchrGrammarParser extends Parser {
 
   ActionContext action_() {
     dynamic _localctx = ActionContext(context, state);
-    enterRule(_localctx, 26, RULE_action);
+    enterRule(_localctx, 28, RULE_action);
     try {
-      state = 135;
+      state = 165;
       errorHandler.sync(this);
       switch (tokenStream.LA(1)!) {
-      case TOKEN_T__8:
+      case TOKEN_T__13:
         _localctx = WhileLoopContext(_localctx);
         enterOuterAlt(_localctx, 1);
-        state = 112;
-        match(TOKEN_T__8);
-        state = 113;
-        match(TOKEN_LBRACE);
-        state = 114;
-        action_list();
-        state = 115;
-        match(TOKEN_RBRACE);
-        state = 116;
-        match(TOKEN_T__9);
-        state = 117;
+        state = 145;
+        match(TOKEN_T__13);
+        state = 146;
         condition();
+        state = 147;
+        match(TOKEN_LBRACE);
+        state = 148;
+        action_list();
+        state = 149;
+        match(TOKEN_RBRACE);
         break;
-      case TOKEN_T__10:
+      case TOKEN_T__14:
         _localctx = RepeatForeverContext(_localctx);
         enterOuterAlt(_localctx, 2);
-        state = 119;
-        match(TOKEN_T__10);
-        state = 120;
+        state = 151;
+        match(TOKEN_T__14);
+        state = 152;
         match(TOKEN_LBRACE);
-        state = 121;
+        state = 153;
         action_list();
-        state = 122;
+        state = 154;
         match(TOKEN_RBRACE);
         break;
-      case TOKEN_T__11:
+      case TOKEN_T__15:
         _localctx = ConditionalContext(_localctx);
         enterOuterAlt(_localctx, 3);
-        state = 124;
-        match(TOKEN_T__11);
-        state = 125;
+        state = 156;
+        match(TOKEN_T__15);
+        state = 157;
         condition();
-        state = 126;
-        match(TOKEN_T__12);
-        state = 127;
-        action_();
-        state = 130;
+        state = 158;
+        match(TOKEN_T__16);
+        state = 159;
+        block();
+        state = 162;
         errorHandler.sync(this);
-        switch (interpreter!.adaptivePredict(tokenStream, 5, context)) {
+        switch (interpreter!.adaptivePredict(tokenStream, 11, context)) {
         case 1:
-          state = 128;
-          match(TOKEN_T__13);
-          state = 129;
-          action_();
+          state = 160;
+          match(TOKEN_T__17);
+          state = 161;
+          block();
           break;
         }
         break;
-      case TOKEN_T__14:
-        _localctx = WaitOtherContext(_localctx);
-        enterOuterAlt(_localctx, 4);
-        state = 132;
-        match(TOKEN_T__14);
-        state = 133;
-        match(TOKEN_ID);
-        break;
-      case TOKEN_T__15:
-      case TOKEN_T__16:
-      case TOKEN_T__17:
       case TOKEN_T__18:
       case TOKEN_T__19:
       case TOKEN_T__20:
       case TOKEN_T__21:
+      case TOKEN_T__22:
       case TOKEN_T__23:
-        _localctx = SimpleActionContext(_localctx);
-        enterOuterAlt(_localctx, 5);
-        state = 134;
+      case TOKEN_T__24:
+      case TOKEN_T__25:
+        _localctx = SimpleCmdContext(_localctx);
+        enterOuterAlt(_localctx, 4);
+        state = 164;
         command();
+        break;
+      default:
+        throw NoViableAltException(this);
+      }
+    } on RecognitionException catch (re) {
+      _localctx.exception = re;
+      errorHandler.reportError(this, re);
+      errorHandler.recover(this, re);
+    } finally {
+      exitRule();
+    }
+    return _localctx;
+  }
+
+  BlockContext block() {
+    dynamic _localctx = BlockContext(context, state);
+    enterRule(_localctx, 30, RULE_block);
+    try {
+      state = 172;
+      errorHandler.sync(this);
+      switch (tokenStream.LA(1)!) {
+      case TOKEN_T__13:
+      case TOKEN_T__14:
+      case TOKEN_T__15:
+      case TOKEN_T__18:
+      case TOKEN_T__19:
+      case TOKEN_T__20:
+      case TOKEN_T__21:
+      case TOKEN_T__22:
+      case TOKEN_T__23:
+      case TOKEN_T__24:
+      case TOKEN_T__25:
+        enterOuterAlt(_localctx, 1);
+        state = 167;
+        action_();
+        break;
+      case TOKEN_LBRACE:
+        enterOuterAlt(_localctx, 2);
+        state = 168;
+        match(TOKEN_LBRACE);
+        state = 169;
+        action_list();
+        state = 170;
+        match(TOKEN_RBRACE);
         break;
       default:
         throw NoViableAltException(this);
@@ -527,68 +653,68 @@ class AsynchrGrammarParser extends Parser {
 
   CommandContext command() {
     dynamic _localctx = CommandContext(context, state);
-    enterRule(_localctx, 28, RULE_command);
+    enterRule(_localctx, 32, RULE_command);
     int _la;
     try {
-      state = 150;
+      state = 187;
       errorHandler.sync(this);
       switch (tokenStream.LA(1)!) {
-      case TOKEN_T__15:
-        _localctx = StepCmdContext(_localctx);
-        enterOuterAlt(_localctx, 1);
-        state = 137;
-        match(TOKEN_T__15);
-        break;
-      case TOKEN_T__16:
-        _localctx = TurnLeftCmdContext(_localctx);
-        enterOuterAlt(_localctx, 2);
-        state = 138;
-        match(TOKEN_T__16);
-        break;
-      case TOKEN_T__17:
-        _localctx = TurnRightCmdContext(_localctx);
-        enterOuterAlt(_localctx, 3);
-        state = 139;
-        match(TOKEN_T__17);
-        break;
       case TOKEN_T__18:
-        _localctx = PickUpCmdContext(_localctx);
-        enterOuterAlt(_localctx, 4);
-        state = 140;
+        _localctx = StepForwardContext(_localctx);
+        enterOuterAlt(_localctx, 1);
+        state = 174;
         match(TOKEN_T__18);
         break;
       case TOKEN_T__19:
-        _localctx = DropCmdContext(_localctx);
-        enterOuterAlt(_localctx, 5);
-        state = 141;
+        _localctx = TurnLeftContext(_localctx);
+        enterOuterAlt(_localctx, 2);
+        state = 175;
         match(TOKEN_T__19);
         break;
       case TOKEN_T__20:
-        _localctx = PauseCmdContext(_localctx);
-        enterOuterAlt(_localctx, 6);
-        state = 142;
+        _localctx = TurnRightContext(_localctx);
+        enterOuterAlt(_localctx, 3);
+        state = 176;
         match(TOKEN_T__20);
-        state = 143;
-        match(TOKEN_NUMBER);
         break;
       case TOKEN_T__21:
-        _localctx = SendCmdContext(_localctx);
-        enterOuterAlt(_localctx, 7);
-        state = 144;
+        _localctx = PickUpContext(_localctx);
+        enterOuterAlt(_localctx, 4);
+        state = 177;
         match(TOKEN_T__21);
-        state = 145;
-        match(TOKEN_STRING);
-        state = 146;
+        break;
+      case TOKEN_T__22:
+        _localctx = DropContext(_localctx);
+        enterOuterAlt(_localctx, 5);
+        state = 178;
         match(TOKEN_T__22);
-        state = 147;
-        match(TOKEN_ID);
         break;
       case TOKEN_T__23:
-        _localctx = RecvCmdContext(_localctx);
-        enterOuterAlt(_localctx, 8);
-        state = 148;
+        _localctx = PauseContext(_localctx);
+        enterOuterAlt(_localctx, 6);
+        state = 179;
         match(TOKEN_T__23);
-        state = 149;
+        state = 180;
+        match(TOKEN_NUMBER);
+        break;
+      case TOKEN_T__24:
+        _localctx = SendContext(_localctx);
+        enterOuterAlt(_localctx, 7);
+        state = 181;
+        match(TOKEN_T__24);
+        state = 182;
+        match(TOKEN_STRING);
+        state = 183;
+        match(TOKEN_ARROW);
+        state = 184;
+        match(TOKEN_ID);
+        break;
+      case TOKEN_T__25:
+        _localctx = ReceiveContext(_localctx);
+        enterOuterAlt(_localctx, 8);
+        state = 185;
+        match(TOKEN_T__25);
+        state = 186;
         _la = tokenStream.LA(1)!;
         if (!(_la == TOKEN_STRING || _la == TOKEN_STAR)) {
         errorHandler.recoverInline(this);
@@ -613,27 +739,60 @@ class AsynchrGrammarParser extends Parser {
 
   ConditionContext condition() {
     dynamic _localctx = ConditionContext(context, state);
-    enterRule(_localctx, 30, RULE_condition);
+    enterRule(_localctx, 34, RULE_condition);
+    int _la;
     try {
-      state = 155;
+      state = 199;
       errorHandler.sync(this);
       switch (tokenStream.LA(1)!) {
-      case TOKEN_T__24:
-        _localctx = HasMsgCondContext(_localctx);
+      case TOKEN_T__26:
+        _localctx = MessageConditionContext(_localctx);
         enterOuterAlt(_localctx, 1);
-        state = 152;
-        match(TOKEN_T__24);
+        state = 189;
+        match(TOKEN_T__26);
+        state = 191;
+        errorHandler.sync(this);
+        _la = tokenStream.LA(1)!;
+        if (_la == TOKEN_STRING) {
+          state = 190;
+          match(TOKEN_STRING);
+        }
+
+        break;
+      case TOKEN_T__27:
+        _localctx = PathClearConditionContext(_localctx);
+        enterOuterAlt(_localctx, 2);
+        state = 193;
+        match(TOKEN_T__27);
+        break;
+      case TOKEN_T__28:
+        _localctx = BoxAheadConditionContext(_localctx);
+        enterOuterAlt(_localctx, 3);
+        state = 194;
+        match(TOKEN_T__28);
+        break;
+      case TOKEN_T__29:
+        _localctx = CarryingBoxConditionContext(_localctx);
+        enterOuterAlt(_localctx, 4);
+        state = 195;
+        match(TOKEN_T__29);
+        break;
+      case TOKEN_T__30:
+        _localctx = ActorAheadConditionContext(_localctx);
+        enterOuterAlt(_localctx, 5);
+        state = 196;
+        match(TOKEN_T__30);
         break;
       case TOKEN_ID:
-        _localctx = IdentifierCondContext(_localctx);
-        enterOuterAlt(_localctx, 2);
-        state = 153;
+        _localctx = IdentifierConditionContext(_localctx);
+        enterOuterAlt(_localctx, 6);
+        state = 197;
         match(TOKEN_ID);
         break;
       case TOKEN_LPAREN:
-        _localctx = PositionCondContext(_localctx);
-        enterOuterAlt(_localctx, 3);
-        state = 154;
+        _localctx = PositionConditionContext(_localctx);
+        enterOuterAlt(_localctx, 7);
+        state = 198;
         position();
         break;
       default:
@@ -649,67 +808,109 @@ class AsynchrGrammarParser extends Parser {
     return _localctx;
   }
 
+  Result_exprContext result_expr() {
+    dynamic _localctx = Result_exprContext(context, state);
+    enterRule(_localctx, 36, RULE_result_expr);
+    try {
+      enterOuterAlt(_localctx, 1);
+      state = 201;
+      match(TOKEN_T__31);
+      state = 202;
+      match(TOKEN_ID);
+      state = 203;
+      match(TOKEN_SEMI);
+    } on RecognitionException catch (re) {
+      _localctx.exception = re;
+      errorHandler.reportError(this, re);
+      errorHandler.recover(this, re);
+    } finally {
+      exitRule();
+    }
+    return _localctx;
+  }
+
   static const List<int> _serializedATN = [
-      4,1,38,158,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,
+      4,1,47,206,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,
       2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,
-      14,7,14,2,15,7,15,1,0,1,0,1,0,1,0,1,1,4,1,38,8,1,11,1,12,1,39,1,2,
-      1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,54,8,2,1,3,1,3,1,3,
-      1,3,1,3,1,3,1,4,1,4,1,4,1,5,1,5,1,5,1,6,1,6,1,6,1,6,1,6,1,7,1,7,1,
-      7,1,7,5,7,77,8,7,10,7,12,7,80,9,7,1,7,1,7,1,8,1,8,1,8,1,8,1,8,1,8,
-      1,9,1,9,1,10,4,10,93,8,10,11,10,12,10,94,1,11,1,11,1,11,1,11,1,11,
-      1,11,1,11,1,11,1,12,1,12,1,12,5,12,108,8,12,10,12,12,12,111,9,12,1,
-      13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,1,13,
-      1,13,1,13,1,13,1,13,3,13,131,8,13,1,13,1,13,1,13,3,13,136,8,13,1,14,
-      1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,3,14,151,
-      8,14,1,15,1,15,1,15,3,15,156,8,15,1,15,0,0,16,0,2,4,6,8,10,12,14,16,
-      18,20,22,24,26,28,30,0,2,1,0,4,7,2,0,28,28,36,36,162,0,32,1,0,0,0,
-      2,37,1,0,0,0,4,53,1,0,0,0,6,55,1,0,0,0,8,61,1,0,0,0,10,64,1,0,0,0,
-      12,67,1,0,0,0,14,72,1,0,0,0,16,83,1,0,0,0,18,89,1,0,0,0,20,92,1,0,
-      0,0,22,96,1,0,0,0,24,104,1,0,0,0,26,135,1,0,0,0,28,150,1,0,0,0,30,
-      155,1,0,0,0,32,33,3,2,1,0,33,34,3,20,10,0,34,35,5,0,0,1,35,1,1,0,0,
-      0,36,38,3,4,2,0,37,36,1,0,0,0,38,39,1,0,0,0,39,37,1,0,0,0,39,40,1,
-      0,0,0,40,3,1,0,0,0,41,42,3,6,3,0,42,43,5,34,0,0,43,54,1,0,0,0,44,45,
-      3,8,4,0,45,46,5,34,0,0,46,54,1,0,0,0,47,48,3,10,5,0,48,49,5,34,0,0,
-      49,54,1,0,0,0,50,51,3,12,6,0,51,52,5,34,0,0,52,54,1,0,0,0,53,41,1,
-      0,0,0,53,44,1,0,0,0,53,47,1,0,0,0,53,50,1,0,0,0,54,5,1,0,0,0,55,56,
-      5,1,0,0,56,57,5,35,0,0,57,58,5,27,0,0,58,59,5,36,0,0,59,60,5,27,0,
-      0,60,7,1,0,0,0,61,62,5,2,0,0,62,63,3,14,7,0,63,9,1,0,0,0,64,65,5,3,
-      0,0,65,66,3,14,7,0,66,11,1,0,0,0,67,68,5,26,0,0,68,69,5,35,0,0,69,
-      70,3,16,8,0,70,71,3,18,9,0,71,13,1,0,0,0,72,73,5,29,0,0,73,78,3,16,
-      8,0,74,75,5,33,0,0,75,77,3,16,8,0,76,74,1,0,0,0,77,80,1,0,0,0,78,76,
-      1,0,0,0,78,79,1,0,0,0,79,81,1,0,0,0,80,78,1,0,0,0,81,82,5,30,0,0,82,
-      15,1,0,0,0,83,84,5,29,0,0,84,85,5,27,0,0,85,86,5,33,0,0,86,87,5,27,
-      0,0,87,88,5,30,0,0,88,17,1,0,0,0,89,90,7,0,0,0,90,19,1,0,0,0,91,93,
-      3,22,11,0,92,91,1,0,0,0,93,94,1,0,0,0,94,92,1,0,0,0,94,95,1,0,0,0,
-      95,21,1,0,0,0,96,97,5,8,0,0,97,98,5,26,0,0,98,99,5,35,0,0,99,100,5,
-      31,0,0,100,101,3,24,12,0,101,102,5,32,0,0,102,103,5,34,0,0,103,23,
-      1,0,0,0,104,109,3,26,13,0,105,106,5,34,0,0,106,108,3,26,13,0,107,105,
-      1,0,0,0,108,111,1,0,0,0,109,107,1,0,0,0,109,110,1,0,0,0,110,25,1,0,
-      0,0,111,109,1,0,0,0,112,113,5,9,0,0,113,114,5,31,0,0,114,115,3,24,
-      12,0,115,116,5,32,0,0,116,117,5,10,0,0,117,118,3,30,15,0,118,136,1,
-      0,0,0,119,120,5,11,0,0,120,121,5,31,0,0,121,122,3,24,12,0,122,123,
-      5,32,0,0,123,136,1,0,0,0,124,125,5,12,0,0,125,126,3,30,15,0,126,127,
-      5,13,0,0,127,130,3,26,13,0,128,129,5,14,0,0,129,131,3,26,13,0,130,
-      128,1,0,0,0,130,131,1,0,0,0,131,136,1,0,0,0,132,133,5,15,0,0,133,136,
-      5,26,0,0,134,136,3,28,14,0,135,112,1,0,0,0,135,119,1,0,0,0,135,124,
-      1,0,0,0,135,132,1,0,0,0,135,134,1,0,0,0,136,27,1,0,0,0,137,151,5,16,
-      0,0,138,151,5,17,0,0,139,151,5,18,0,0,140,151,5,19,0,0,141,151,5,20,
-      0,0,142,143,5,21,0,0,143,151,5,27,0,0,144,145,5,22,0,0,145,146,5,28,
-      0,0,146,147,5,23,0,0,147,151,5,26,0,0,148,149,5,24,0,0,149,151,7,1,
-      0,0,150,137,1,0,0,0,150,138,1,0,0,0,150,139,1,0,0,0,150,140,1,0,0,
-      0,150,141,1,0,0,0,150,142,1,0,0,0,150,144,1,0,0,0,150,148,1,0,0,0,
-      151,29,1,0,0,0,152,156,5,25,0,0,153,156,5,26,0,0,154,156,3,16,8,0,
-      155,152,1,0,0,0,155,153,1,0,0,0,155,154,1,0,0,0,156,31,1,0,0,0,9,39,
-      53,78,94,109,130,135,150,155
+      14,7,14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,1,0,3,0,40,8,0,1,0,
+      5,0,43,8,0,10,0,12,0,46,9,0,1,0,3,0,49,8,0,1,0,1,0,1,1,4,1,54,8,1,
+      11,1,12,1,55,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,70,
+      8,2,1,3,1,3,1,3,1,3,1,3,1,3,1,4,1,4,1,4,1,5,1,5,1,5,1,6,1,6,1,6,1,
+      6,1,6,1,7,1,7,1,8,1,8,1,8,1,8,5,8,95,8,8,10,8,12,8,98,9,8,1,8,1,8,
+      1,9,1,9,1,9,1,9,1,9,1,9,1,10,1,10,1,10,3,10,111,8,10,1,10,1,10,1,10,
+      1,10,5,10,117,8,10,10,10,12,10,120,9,10,1,10,1,10,3,10,124,8,10,1,
+      10,1,10,1,11,1,11,3,11,130,8,11,1,11,1,11,1,11,1,11,1,12,1,12,1,13,
+      1,13,1,13,5,13,141,8,13,10,13,12,13,144,9,13,1,14,1,14,1,14,1,14,1,
+      14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,3,14,
+      163,8,14,1,14,3,14,166,8,14,1,15,1,15,1,15,1,15,1,15,3,15,173,8,15,
+      1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,1,16,3,
+      16,188,8,16,1,17,1,17,3,17,192,8,17,1,17,1,17,1,17,1,17,1,17,1,17,
+      3,17,200,8,17,1,18,1,18,1,18,1,18,1,18,0,0,19,0,2,4,6,8,10,12,14,16,
+      18,20,22,24,26,28,30,32,34,36,0,3,1,0,4,7,2,0,9,13,43,44,2,0,35,35,
+      44,44,218,0,39,1,0,0,0,2,53,1,0,0,0,4,69,1,0,0,0,6,71,1,0,0,0,8,77,
+      1,0,0,0,10,80,1,0,0,0,12,83,1,0,0,0,14,88,1,0,0,0,16,90,1,0,0,0,18,
+      101,1,0,0,0,20,107,1,0,0,0,22,129,1,0,0,0,24,135,1,0,0,0,26,137,1,
+      0,0,0,28,165,1,0,0,0,30,172,1,0,0,0,32,187,1,0,0,0,34,199,1,0,0,0,
+      36,201,1,0,0,0,38,40,3,2,1,0,39,38,1,0,0,0,39,40,1,0,0,0,40,44,1,0,
+      0,0,41,43,3,20,10,0,42,41,1,0,0,0,43,46,1,0,0,0,44,42,1,0,0,0,44,45,
+      1,0,0,0,45,48,1,0,0,0,46,44,1,0,0,0,47,49,3,36,18,0,48,47,1,0,0,0,
+      48,49,1,0,0,0,49,50,1,0,0,0,50,51,5,0,0,1,51,1,1,0,0,0,52,54,3,4,2,
+      0,53,52,1,0,0,0,54,55,1,0,0,0,55,53,1,0,0,0,55,56,1,0,0,0,56,3,1,0,
+      0,0,57,58,3,6,3,0,58,59,5,41,0,0,59,70,1,0,0,0,60,61,3,8,4,0,61,62,
+      5,41,0,0,62,70,1,0,0,0,63,64,3,10,5,0,64,65,5,41,0,0,65,70,1,0,0,0,
+      66,67,3,12,6,0,67,68,5,41,0,0,68,70,1,0,0,0,69,57,1,0,0,0,69,60,1,
+      0,0,0,69,63,1,0,0,0,69,66,1,0,0,0,70,5,1,0,0,0,71,72,5,1,0,0,72,73,
+      5,42,0,0,73,74,5,34,0,0,74,75,5,44,0,0,75,76,5,34,0,0,76,7,1,0,0,0,
+      77,78,5,2,0,0,78,79,3,16,8,0,79,9,1,0,0,0,80,81,5,3,0,0,81,82,3,16,
+      8,0,82,11,1,0,0,0,83,84,5,33,0,0,84,85,5,42,0,0,85,86,3,18,9,0,86,
+      87,3,14,7,0,87,13,1,0,0,0,88,89,7,0,0,0,89,15,1,0,0,0,90,91,5,36,0,
+      0,91,96,3,18,9,0,92,93,5,40,0,0,93,95,3,18,9,0,94,92,1,0,0,0,95,98,
+      1,0,0,0,96,94,1,0,0,0,96,97,1,0,0,0,97,99,1,0,0,0,98,96,1,0,0,0,99,
+      100,5,37,0,0,100,17,1,0,0,0,101,102,5,36,0,0,102,103,5,34,0,0,103,
+      104,5,40,0,0,104,105,5,34,0,0,105,106,5,37,0,0,106,19,1,0,0,0,107,
+      110,5,8,0,0,108,109,5,33,0,0,109,111,5,42,0,0,110,108,1,0,0,0,110,
+      111,1,0,0,0,111,112,1,0,0,0,112,113,5,36,0,0,113,118,3,22,11,0,114,
+      115,5,40,0,0,115,117,3,22,11,0,116,114,1,0,0,0,117,120,1,0,0,0,118,
+      116,1,0,0,0,118,119,1,0,0,0,119,121,1,0,0,0,120,118,1,0,0,0,121,123,
+      5,37,0,0,122,124,3,24,12,0,123,122,1,0,0,0,123,124,1,0,0,0,124,125,
+      1,0,0,0,125,126,5,41,0,0,126,21,1,0,0,0,127,128,5,33,0,0,128,130,5,
+      42,0,0,129,127,1,0,0,0,129,130,1,0,0,0,130,131,1,0,0,0,131,132,5,38,
+      0,0,132,133,3,26,13,0,133,134,5,39,0,0,134,23,1,0,0,0,135,136,7,1,
+      0,0,136,25,1,0,0,0,137,142,3,28,14,0,138,139,5,41,0,0,139,141,3,28,
+      14,0,140,138,1,0,0,0,141,144,1,0,0,0,142,140,1,0,0,0,142,143,1,0,0,
+      0,143,27,1,0,0,0,144,142,1,0,0,0,145,146,5,14,0,0,146,147,3,34,17,
+      0,147,148,5,38,0,0,148,149,3,26,13,0,149,150,5,39,0,0,150,166,1,0,
+      0,0,151,152,5,15,0,0,152,153,5,38,0,0,153,154,3,26,13,0,154,155,5,
+      39,0,0,155,166,1,0,0,0,156,157,5,16,0,0,157,158,3,34,17,0,158,159,
+      5,17,0,0,159,162,3,30,15,0,160,161,5,18,0,0,161,163,3,30,15,0,162,
+      160,1,0,0,0,162,163,1,0,0,0,163,166,1,0,0,0,164,166,3,32,16,0,165,
+      145,1,0,0,0,165,151,1,0,0,0,165,156,1,0,0,0,165,164,1,0,0,0,166,29,
+      1,0,0,0,167,173,3,28,14,0,168,169,5,38,0,0,169,170,3,26,13,0,170,171,
+      5,39,0,0,171,173,1,0,0,0,172,167,1,0,0,0,172,168,1,0,0,0,173,31,1,
+      0,0,0,174,188,5,19,0,0,175,188,5,20,0,0,176,188,5,21,0,0,177,188,5,
+      22,0,0,178,188,5,23,0,0,179,180,5,24,0,0,180,188,5,34,0,0,181,182,
+      5,25,0,0,182,183,5,35,0,0,183,184,5,45,0,0,184,188,5,33,0,0,185,186,
+      5,26,0,0,186,188,7,2,0,0,187,174,1,0,0,0,187,175,1,0,0,0,187,176,1,
+      0,0,0,187,177,1,0,0,0,187,178,1,0,0,0,187,179,1,0,0,0,187,181,1,0,
+      0,0,187,185,1,0,0,0,188,33,1,0,0,0,189,191,5,27,0,0,190,192,5,35,0,
+      0,191,190,1,0,0,0,191,192,1,0,0,0,192,200,1,0,0,0,193,200,5,28,0,0,
+      194,200,5,29,0,0,195,200,5,30,0,0,196,200,5,31,0,0,197,200,5,33,0,
+      0,198,200,3,18,9,0,199,189,1,0,0,0,199,193,1,0,0,0,199,194,1,0,0,0,
+      199,195,1,0,0,0,199,196,1,0,0,0,199,197,1,0,0,0,199,198,1,0,0,0,200,
+      35,1,0,0,0,201,202,5,32,0,0,202,203,5,33,0,0,203,204,5,41,0,0,204,
+      37,1,0,0,0,17,39,44,48,55,69,96,110,118,123,129,142,162,165,172,187,
+      191,199
   ];
 
   static final ATN _ATN =
       ATNDeserializer().deserialize(_serializedATN);
 }
 class ProgramContext extends ParserRuleContext {
-  Context_blockContext? context_block() => getRuleContext<Context_blockContext>(0);
-  Behavior_blockContext? behavior_block() => getRuleContext<Behavior_blockContext>(0);
   TerminalNode? EOF() => getToken(AsynchrGrammarParser.TOKEN_EOF, 0);
+  Context_blockContext? context_block() => getRuleContext<Context_blockContext>(0);
+  List<Set_blockContext> set_blocks() => getRuleContexts<Set_blockContext>();
+  Set_blockContext? set_block(int i) => getRuleContext<Set_blockContext>(i);
+  Result_exprContext? result_expr() => getRuleContext<Result_exprContext>(0);
   ProgramContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
   @override
   int get ruleIndex => RULE_program;
@@ -880,6 +1081,28 @@ class Actor_defContext extends ParserRuleContext {
   }
 }
 
+class DirectionContext extends ParserRuleContext {
+  DirectionContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
+  @override
+  int get ruleIndex => RULE_direction;
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.enterDirection(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.exitDirection(this);
+  }
+  @override
+  T? accept<T>(ParseTreeVisitor<T> visitor) {
+    if (visitor is AsynchrGrammarVisitor<T>) {
+     return visitor.visitDirection(this);
+    } else {
+    	return visitor.visitChildren(this);
+    }
+  }
+}
+
 class Position_groupContext extends ParserRuleContext {
   TerminalNode? LPAREN() => getToken(AsynchrGrammarParser.TOKEN_LPAREN, 0);
   List<PositionContext> positions() => getRuleContexts<PositionContext>();
@@ -935,74 +1158,83 @@ class PositionContext extends ParserRuleContext {
   }
 }
 
-class DirectionContext extends ParserRuleContext {
-  DirectionContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
-  @override
-  int get ruleIndex => RULE_direction;
-  @override
-  void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterDirection(this);
-  }
-  @override
-  void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitDirection(this);
-  }
-  @override
-  T? accept<T>(ParseTreeVisitor<T> visitor) {
-    if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitDirection(this);
-    } else {
-    	return visitor.visitChildren(this);
-    }
-  }
-}
-
-class Behavior_blockContext extends ParserRuleContext {
-  List<Behavior_statementContext> behavior_statements() => getRuleContexts<Behavior_statementContext>();
-  Behavior_statementContext? behavior_statement(int i) => getRuleContext<Behavior_statementContext>(i);
-  Behavior_blockContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
-  @override
-  int get ruleIndex => RULE_behavior_block;
-  @override
-  void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterBehavior_block(this);
-  }
-  @override
-  void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitBehavior_block(this);
-  }
-  @override
-  T? accept<T>(ParseTreeVisitor<T> visitor) {
-    if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitBehavior_block(this);
-    } else {
-    	return visitor.visitChildren(this);
-    }
-  }
-}
-
-class Behavior_statementContext extends ParserRuleContext {
+class Set_blockContext extends ParserRuleContext {
+  TerminalNode? LPAREN() => getToken(AsynchrGrammarParser.TOKEN_LPAREN, 0);
+  List<ThreadContext> threads() => getRuleContexts<ThreadContext>();
+  ThreadContext? thread(int i) => getRuleContext<ThreadContext>(i);
+  TerminalNode? RPAREN() => getToken(AsynchrGrammarParser.TOKEN_RPAREN, 0);
+  TerminalNode? SEMI() => getToken(AsynchrGrammarParser.TOKEN_SEMI, 0);
   TerminalNode? ID() => getToken(AsynchrGrammarParser.TOKEN_ID, 0);
   TerminalNode? EQ() => getToken(AsynchrGrammarParser.TOKEN_EQ, 0);
+  List<TerminalNode> COMMAs() => getTokens(AsynchrGrammarParser.TOKEN_COMMA);
+  TerminalNode? COMMA(int i) => getToken(AsynchrGrammarParser.TOKEN_COMMA, i);
+  Fold_opContext? fold_op() => getRuleContext<Fold_opContext>(0);
+  Set_blockContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
+  @override
+  int get ruleIndex => RULE_set_block;
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.enterSet_block(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.exitSet_block(this);
+  }
+  @override
+  T? accept<T>(ParseTreeVisitor<T> visitor) {
+    if (visitor is AsynchrGrammarVisitor<T>) {
+     return visitor.visitSet_block(this);
+    } else {
+    	return visitor.visitChildren(this);
+    }
+  }
+}
+
+class ThreadContext extends ParserRuleContext {
   TerminalNode? LBRACE() => getToken(AsynchrGrammarParser.TOKEN_LBRACE, 0);
   Action_listContext? action_list() => getRuleContext<Action_listContext>(0);
   TerminalNode? RBRACE() => getToken(AsynchrGrammarParser.TOKEN_RBRACE, 0);
-  TerminalNode? SEMI() => getToken(AsynchrGrammarParser.TOKEN_SEMI, 0);
-  Behavior_statementContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
+  TerminalNode? ID() => getToken(AsynchrGrammarParser.TOKEN_ID, 0);
+  TerminalNode? EQ() => getToken(AsynchrGrammarParser.TOKEN_EQ, 0);
+  ThreadContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
   @override
-  int get ruleIndex => RULE_behavior_statement;
+  int get ruleIndex => RULE_thread;
   @override
   void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterBehavior_statement(this);
+    if (listener is AsynchrGrammarListener) listener.enterThread(this);
   }
   @override
   void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitBehavior_statement(this);
+    if (listener is AsynchrGrammarListener) listener.exitThread(this);
   }
   @override
   T? accept<T>(ParseTreeVisitor<T> visitor) {
     if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitBehavior_statement(this);
+     return visitor.visitThread(this);
+    } else {
+    	return visitor.visitChildren(this);
+    }
+  }
+}
+
+class Fold_opContext extends ParserRuleContext {
+  TerminalNode? PLUS() => getToken(AsynchrGrammarParser.TOKEN_PLUS, 0);
+  TerminalNode? STAR() => getToken(AsynchrGrammarParser.TOKEN_STAR, 0);
+  Fold_opContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
+  @override
+  int get ruleIndex => RULE_fold_op;
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.enterFold_op(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.exitFold_op(this);
+  }
+  @override
+  T? accept<T>(ParseTreeVisitor<T> visitor) {
+    if (visitor is AsynchrGrammarVisitor<T>) {
+     return visitor.visitFold_op(this);
     } else {
     	return visitor.visitChildren(this);
     }
@@ -1046,6 +1278,32 @@ class ActionContext extends ParserRuleContext {
   }
 }
 
+class BlockContext extends ParserRuleContext {
+  ActionContext? action_() => getRuleContext<ActionContext>(0);
+  TerminalNode? LBRACE() => getToken(AsynchrGrammarParser.TOKEN_LBRACE, 0);
+  Action_listContext? action_list() => getRuleContext<Action_listContext>(0);
+  TerminalNode? RBRACE() => getToken(AsynchrGrammarParser.TOKEN_RBRACE, 0);
+  BlockContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
+  @override
+  int get ruleIndex => RULE_block;
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.enterBlock(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.exitBlock(this);
+  }
+  @override
+  T? accept<T>(ParseTreeVisitor<T> visitor) {
+    if (visitor is AsynchrGrammarVisitor<T>) {
+     return visitor.visitBlock(this);
+    } else {
+    	return visitor.visitChildren(this);
+    }
+  }
+}
+
 class CommandContext extends ParserRuleContext {
   CommandContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
   @override
@@ -1068,21 +1326,24 @@ class ConditionContext extends ParserRuleContext {
   }
 }
 
-class WaitOtherContext extends ActionContext {
+class Result_exprContext extends ParserRuleContext {
   TerminalNode? ID() => getToken(AsynchrGrammarParser.TOKEN_ID, 0);
-  WaitOtherContext(ActionContext ctx) { copyFrom(ctx); }
+  TerminalNode? SEMI() => getToken(AsynchrGrammarParser.TOKEN_SEMI, 0);
+  Result_exprContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
+  @override
+  int get ruleIndex => RULE_result_expr;
   @override
   void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterWaitOther(this);
+    if (listener is AsynchrGrammarListener) listener.enterResult_expr(this);
   }
   @override
   void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitWaitOther(this);
+    if (listener is AsynchrGrammarListener) listener.exitResult_expr(this);
   }
   @override
   T? accept<T>(ParseTreeVisitor<T> visitor) {
     if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitWaitOther(this);
+     return visitor.visitResult_expr(this);
     } else {
     	return visitor.visitChildren(this);
     }
@@ -1091,8 +1352,8 @@ class WaitOtherContext extends ActionContext {
 
 class ConditionalContext extends ActionContext {
   ConditionContext? condition() => getRuleContext<ConditionContext>(0);
-  List<ActionContext> actions() => getRuleContexts<ActionContext>();
-  ActionContext? action_(int i) => getRuleContext<ActionContext>(i);
+  List<BlockContext> blocks() => getRuleContexts<BlockContext>();
+  BlockContext? block(int i) => getRuleContext<BlockContext>(i);
   ConditionalContext(ActionContext ctx) { copyFrom(ctx); }
   @override
   void enterRule(ParseTreeListener listener) {
@@ -1112,11 +1373,32 @@ class ConditionalContext extends ActionContext {
   }
 }
 
+class SimpleCmdContext extends ActionContext {
+  CommandContext? command() => getRuleContext<CommandContext>(0);
+  SimpleCmdContext(ActionContext ctx) { copyFrom(ctx); }
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.enterSimpleCmd(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.exitSimpleCmd(this);
+  }
+  @override
+  T? accept<T>(ParseTreeVisitor<T> visitor) {
+    if (visitor is AsynchrGrammarVisitor<T>) {
+     return visitor.visitSimpleCmd(this);
+    } else {
+    	return visitor.visitChildren(this);
+    }
+  }
+}
+
 class WhileLoopContext extends ActionContext {
+  ConditionContext? condition() => getRuleContext<ConditionContext>(0);
   TerminalNode? LBRACE() => getToken(AsynchrGrammarParser.TOKEN_LBRACE, 0);
   Action_listContext? action_list() => getRuleContext<Action_listContext>(0);
   TerminalNode? RBRACE() => getToken(AsynchrGrammarParser.TOKEN_RBRACE, 0);
-  ConditionContext? condition() => getRuleContext<ConditionContext>(0);
   WhileLoopContext(ActionContext ctx) { copyFrom(ctx); }
   @override
   void enterRule(ParseTreeListener listener) {
@@ -1157,246 +1439,307 @@ class RepeatForeverContext extends ActionContext {
     	return visitor.visitChildren(this);
     }
   }
-}
-
-class SimpleActionContext extends ActionContext {
-  CommandContext? command() => getRuleContext<CommandContext>(0);
-  SimpleActionContext(ActionContext ctx) { copyFrom(ctx); }
+}class TurnRightContext extends CommandContext {
+  TurnRightContext(CommandContext ctx) { copyFrom(ctx); }
   @override
   void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterSimpleAction(this);
+    if (listener is AsynchrGrammarListener) listener.enterTurnRight(this);
   }
   @override
   void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitSimpleAction(this);
+    if (listener is AsynchrGrammarListener) listener.exitTurnRight(this);
   }
   @override
   T? accept<T>(ParseTreeVisitor<T> visitor) {
     if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitSimpleAction(this);
+     return visitor.visitTurnRight(this);
     } else {
     	return visitor.visitChildren(this);
     }
   }
-}class PauseCmdContext extends CommandContext {
+}
+
+class TurnLeftContext extends CommandContext {
+  TurnLeftContext(CommandContext ctx) { copyFrom(ctx); }
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.enterTurnLeft(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.exitTurnLeft(this);
+  }
+  @override
+  T? accept<T>(ParseTreeVisitor<T> visitor) {
+    if (visitor is AsynchrGrammarVisitor<T>) {
+     return visitor.visitTurnLeft(this);
+    } else {
+    	return visitor.visitChildren(this);
+    }
+  }
+}
+
+class PauseContext extends CommandContext {
   TerminalNode? NUMBER() => getToken(AsynchrGrammarParser.TOKEN_NUMBER, 0);
-  PauseCmdContext(CommandContext ctx) { copyFrom(ctx); }
+  PauseContext(CommandContext ctx) { copyFrom(ctx); }
   @override
   void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterPauseCmd(this);
+    if (listener is AsynchrGrammarListener) listener.enterPause(this);
   }
   @override
   void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitPauseCmd(this);
+    if (listener is AsynchrGrammarListener) listener.exitPause(this);
   }
   @override
   T? accept<T>(ParseTreeVisitor<T> visitor) {
     if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitPauseCmd(this);
+     return visitor.visitPause(this);
     } else {
     	return visitor.visitChildren(this);
     }
   }
 }
 
-class PickUpCmdContext extends CommandContext {
-  PickUpCmdContext(CommandContext ctx) { copyFrom(ctx); }
+class StepForwardContext extends CommandContext {
+  StepForwardContext(CommandContext ctx) { copyFrom(ctx); }
   @override
   void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterPickUpCmd(this);
+    if (listener is AsynchrGrammarListener) listener.enterStepForward(this);
   }
   @override
   void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitPickUpCmd(this);
+    if (listener is AsynchrGrammarListener) listener.exitStepForward(this);
   }
   @override
   T? accept<T>(ParseTreeVisitor<T> visitor) {
     if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitPickUpCmd(this);
+     return visitor.visitStepForward(this);
     } else {
     	return visitor.visitChildren(this);
     }
   }
 }
 
-class StepCmdContext extends CommandContext {
-  StepCmdContext(CommandContext ctx) { copyFrom(ctx); }
+class PickUpContext extends CommandContext {
+  PickUpContext(CommandContext ctx) { copyFrom(ctx); }
   @override
   void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterStepCmd(this);
+    if (listener is AsynchrGrammarListener) listener.enterPickUp(this);
   }
   @override
   void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitStepCmd(this);
+    if (listener is AsynchrGrammarListener) listener.exitPickUp(this);
   }
   @override
   T? accept<T>(ParseTreeVisitor<T> visitor) {
     if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitStepCmd(this);
+     return visitor.visitPickUp(this);
     } else {
     	return visitor.visitChildren(this);
     }
   }
 }
 
-class TurnRightCmdContext extends CommandContext {
-  TurnRightCmdContext(CommandContext ctx) { copyFrom(ctx); }
-  @override
-  void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterTurnRightCmd(this);
-  }
-  @override
-  void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitTurnRightCmd(this);
-  }
-  @override
-  T? accept<T>(ParseTreeVisitor<T> visitor) {
-    if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitTurnRightCmd(this);
-    } else {
-    	return visitor.visitChildren(this);
-    }
-  }
-}
-
-class RecvCmdContext extends CommandContext {
+class ReceiveContext extends CommandContext {
   TerminalNode? STRING() => getToken(AsynchrGrammarParser.TOKEN_STRING, 0);
   TerminalNode? STAR() => getToken(AsynchrGrammarParser.TOKEN_STAR, 0);
-  RecvCmdContext(CommandContext ctx) { copyFrom(ctx); }
+  ReceiveContext(CommandContext ctx) { copyFrom(ctx); }
   @override
   void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterRecvCmd(this);
+    if (listener is AsynchrGrammarListener) listener.enterReceive(this);
   }
   @override
   void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitRecvCmd(this);
+    if (listener is AsynchrGrammarListener) listener.exitReceive(this);
   }
   @override
   T? accept<T>(ParseTreeVisitor<T> visitor) {
     if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitRecvCmd(this);
+     return visitor.visitReceive(this);
     } else {
     	return visitor.visitChildren(this);
     }
   }
 }
 
-class SendCmdContext extends CommandContext {
+class DropContext extends CommandContext {
+  DropContext(CommandContext ctx) { copyFrom(ctx); }
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.enterDrop(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.exitDrop(this);
+  }
+  @override
+  T? accept<T>(ParseTreeVisitor<T> visitor) {
+    if (visitor is AsynchrGrammarVisitor<T>) {
+     return visitor.visitDrop(this);
+    } else {
+    	return visitor.visitChildren(this);
+    }
+  }
+}
+
+class SendContext extends CommandContext {
   TerminalNode? STRING() => getToken(AsynchrGrammarParser.TOKEN_STRING, 0);
+  TerminalNode? ARROW() => getToken(AsynchrGrammarParser.TOKEN_ARROW, 0);
   TerminalNode? ID() => getToken(AsynchrGrammarParser.TOKEN_ID, 0);
-  SendCmdContext(CommandContext ctx) { copyFrom(ctx); }
+  SendContext(CommandContext ctx) { copyFrom(ctx); }
   @override
   void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterSendCmd(this);
+    if (listener is AsynchrGrammarListener) listener.enterSend(this);
   }
   @override
   void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitSendCmd(this);
+    if (listener is AsynchrGrammarListener) listener.exitSend(this);
   }
   @override
   T? accept<T>(ParseTreeVisitor<T> visitor) {
     if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitSendCmd(this);
+     return visitor.visitSend(this);
+    } else {
+    	return visitor.visitChildren(this);
+    }
+  }
+}class ActorAheadConditionContext extends ConditionContext {
+  ActorAheadConditionContext(ConditionContext ctx) { copyFrom(ctx); }
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.enterActorAheadCondition(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.exitActorAheadCondition(this);
+  }
+  @override
+  T? accept<T>(ParseTreeVisitor<T> visitor) {
+    if (visitor is AsynchrGrammarVisitor<T>) {
+     return visitor.visitActorAheadCondition(this);
     } else {
     	return visitor.visitChildren(this);
     }
   }
 }
 
-class TurnLeftCmdContext extends CommandContext {
-  TurnLeftCmdContext(CommandContext ctx) { copyFrom(ctx); }
+class IdentifierConditionContext extends ConditionContext {
+  TerminalNode? ID() => getToken(AsynchrGrammarParser.TOKEN_ID, 0);
+  IdentifierConditionContext(ConditionContext ctx) { copyFrom(ctx); }
   @override
   void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterTurnLeftCmd(this);
+    if (listener is AsynchrGrammarListener) listener.enterIdentifierCondition(this);
   }
   @override
   void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitTurnLeftCmd(this);
+    if (listener is AsynchrGrammarListener) listener.exitIdentifierCondition(this);
   }
   @override
   T? accept<T>(ParseTreeVisitor<T> visitor) {
     if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitTurnLeftCmd(this);
+     return visitor.visitIdentifierCondition(this);
     } else {
     	return visitor.visitChildren(this);
     }
   }
 }
 
-class DropCmdContext extends CommandContext {
-  DropCmdContext(CommandContext ctx) { copyFrom(ctx); }
+class MessageConditionContext extends ConditionContext {
+  TerminalNode? STRING() => getToken(AsynchrGrammarParser.TOKEN_STRING, 0);
+  MessageConditionContext(ConditionContext ctx) { copyFrom(ctx); }
   @override
   void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterDropCmd(this);
+    if (listener is AsynchrGrammarListener) listener.enterMessageCondition(this);
   }
   @override
   void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitDropCmd(this);
+    if (listener is AsynchrGrammarListener) listener.exitMessageCondition(this);
   }
   @override
   T? accept<T>(ParseTreeVisitor<T> visitor) {
     if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitDropCmd(this);
+     return visitor.visitMessageCondition(this);
     } else {
     	return visitor.visitChildren(this);
     }
   }
-}class PositionCondContext extends ConditionContext {
+}
+
+class PathClearConditionContext extends ConditionContext {
+  PathClearConditionContext(ConditionContext ctx) { copyFrom(ctx); }
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.enterPathClearCondition(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.exitPathClearCondition(this);
+  }
+  @override
+  T? accept<T>(ParseTreeVisitor<T> visitor) {
+    if (visitor is AsynchrGrammarVisitor<T>) {
+     return visitor.visitPathClearCondition(this);
+    } else {
+    	return visitor.visitChildren(this);
+    }
+  }
+}
+
+class BoxAheadConditionContext extends ConditionContext {
+  BoxAheadConditionContext(ConditionContext ctx) { copyFrom(ctx); }
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.enterBoxAheadCondition(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.exitBoxAheadCondition(this);
+  }
+  @override
+  T? accept<T>(ParseTreeVisitor<T> visitor) {
+    if (visitor is AsynchrGrammarVisitor<T>) {
+     return visitor.visitBoxAheadCondition(this);
+    } else {
+    	return visitor.visitChildren(this);
+    }
+  }
+}
+
+class CarryingBoxConditionContext extends ConditionContext {
+  CarryingBoxConditionContext(ConditionContext ctx) { copyFrom(ctx); }
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.enterCarryingBoxCondition(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is AsynchrGrammarListener) listener.exitCarryingBoxCondition(this);
+  }
+  @override
+  T? accept<T>(ParseTreeVisitor<T> visitor) {
+    if (visitor is AsynchrGrammarVisitor<T>) {
+     return visitor.visitCarryingBoxCondition(this);
+    } else {
+    	return visitor.visitChildren(this);
+    }
+  }
+}
+
+class PositionConditionContext extends ConditionContext {
   PositionContext? position() => getRuleContext<PositionContext>(0);
-  PositionCondContext(ConditionContext ctx) { copyFrom(ctx); }
+  PositionConditionContext(ConditionContext ctx) { copyFrom(ctx); }
   @override
   void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterPositionCond(this);
+    if (listener is AsynchrGrammarListener) listener.enterPositionCondition(this);
   }
   @override
   void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitPositionCond(this);
+    if (listener is AsynchrGrammarListener) listener.exitPositionCondition(this);
   }
   @override
   T? accept<T>(ParseTreeVisitor<T> visitor) {
     if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitPositionCond(this);
-    } else {
-    	return visitor.visitChildren(this);
-    }
-  }
-}
-
-class HasMsgCondContext extends ConditionContext {
-  HasMsgCondContext(ConditionContext ctx) { copyFrom(ctx); }
-  @override
-  void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterHasMsgCond(this);
-  }
-  @override
-  void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitHasMsgCond(this);
-  }
-  @override
-  T? accept<T>(ParseTreeVisitor<T> visitor) {
-    if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitHasMsgCond(this);
-    } else {
-    	return visitor.visitChildren(this);
-    }
-  }
-}
-
-class IdentifierCondContext extends ConditionContext {
-  TerminalNode? ID() => getToken(AsynchrGrammarParser.TOKEN_ID, 0);
-  IdentifierCondContext(ConditionContext ctx) { copyFrom(ctx); }
-  @override
-  void enterRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.enterIdentifierCond(this);
-  }
-  @override
-  void exitRule(ParseTreeListener listener) {
-    if (listener is AsynchrGrammarListener) listener.exitIdentifierCond(this);
-  }
-  @override
-  T? accept<T>(ParseTreeVisitor<T> visitor) {
-    if (visitor is AsynchrGrammarVisitor<T>) {
-     return visitor.visitIdentifierCond(this);
+     return visitor.visitPositionCondition(this);
     } else {
     	return visitor.visitChildren(this);
     }

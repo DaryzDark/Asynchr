@@ -1,75 +1,100 @@
+// =====================================================================
+//  AsynchrGrammar — чистый параллельный DSL для клеточных агентов
+// =====================================================================
 grammar AsynchrGrammar;
 
-// ---------- ПРОГРАММА ----------
+/* ───────────────────────── ПРОГРАММА ─────────────────────────────── */
 program
-    : context_block behavior_block EOF
+    : context_block?                 // описание мира
+      (set_block)*                   // наборы параллельных потоков
+      result_expr?                   // опц. результат
+      EOF
     ;
 
-// ---------- КОНТЕКСТ ----------
-context_block            : context_statement+ ;
+/* ───────────────────────── КОНТЕКСТ ─────────────────────────────── */
+context_block       : context_statement+ ;
+
 context_statement
-    : board_def   SEMI
-    | wall_def    SEMI
-    | box_def     SEMI
-    | actor_def   SEMI
+    : board_def SEMI
+    | wall_def  SEMI
+    | box_def   SEMI
+    | actor_def SEMI
     ;
 
-board_def                : 'Доска'   EQ NUMBER STAR NUMBER ;
-wall_def                 : 'Стены'   position_group ;
-box_def                  : 'Коробки' position_group ;
-actor_def                : ID EQ position direction ;
+board_def           : 'Доска' EQ NUMBER STAR NUMBER ;
+wall_def            : 'Стены'   position_group ;
+box_def             : 'Коробки' position_group ;
+actor_def           : ID EQ position direction ;
 
-position_group           : LPAREN position (COMMA position)* RPAREN ;
-position                 : LPAREN NUMBER COMMA NUMBER RPAREN ;
-direction                : 'ВВЕРХ' | 'ВНИЗ' | 'ВЛЕВО' | 'ВПРАВО' ;
+direction           : 'ВВЕРХ' | 'ВНИЗ' | 'ВЛЕВО' | 'ВПРАВО' ;
+position_group      : LPAREN position (COMMA position)* RPAREN ;
+position            : LPAREN NUMBER COMMA NUMBER RPAREN ;
 
-// ---------- ПОВЕДЕНИЕ ----------
-behavior_block           : behavior_statement+ ;
-
-behavior_statement
-    : 'Для' ID EQ LBRACE action_list RBRACE SEMI
-      // каждый блок играет роль «независимого потока»
+/* ──────────────── НАБОР ПАРАЛЛЕЛЬНЫХ ПОТОКОВ ─────────────────────── */
+set_block
+    : 'Набор' (ID EQ)? LPAREN thread (COMMA thread)* RPAREN fold_op? SEMI
     ;
 
-action_list              : action (SEMI action)* ;
+thread              : (ID EQ)? LBRACE action_list RBRACE ;
 
-// ── атомарное действие или группа ─────────────────────
+fold_op
+    : PLUS | STAR | 'МИН' | 'МАКС' | 'ДЛИНА' | 'ПЕРВЫЙ' | 'ПОСЛЕДНИЙ' ;
+
+/* ────────── СПИСОК ДЕЙСТВИЙ ───────────────────────── */
+action_list
+    : action (SEMI action)* ;
+
 action
-    : 'ЦИКЛ'      LBRACE action_list RBRACE 'ПОКА' condition    # WhileLoop
-    | 'ПОВТОРИТЬ' LBRACE action_list RBRACE                     # RepeatForever
-    | 'ЕСЛИ' condition 'ТО' action ('ИНАЧЕ' action)?            # Conditional
-    | 'ЖДАТЬ' ID                                                # WaitOther
-    | command                                                   # SimpleAction
+    : 'ПОКА' condition LBRACE action_list RBRACE                  # WhileLoop
+    | 'ПОВТОРИТЬ' LBRACE action_list RBRACE                       # RepeatForever
+    | 'ЕСЛИ' condition 'ТО' block ('ИНАЧЕ' block)?                # Conditional
+    | command                                                     # SimpleCmd
     ;
 
-// ---------- КОМАНДЫ ----------
+block : action | LBRACE action_list RBRACE ;
+
+/* ─────────────────────── КОМАНДЫ ПОЛЯ ────────────────────────────── */
 command
-    : 'Шаг Вперёд'           # StepCmd
-    | 'Повернуть Влево'      # TurnLeftCmd
-    | 'Повернуть Вправо'     # TurnRightCmd
-    | 'Поднять_коробку'      # PickUpCmd
-    | 'Опустить_коробку'     # DropCmd
-    | 'ПАУЗА' NUMBER         # PauseCmd        // неблокирующая задержка
-    | 'ОТПРАВИТЬ' STRING '->' ID              # SendCmd
-    | 'ПОЛУЧИТЬ' (STRING | STAR)              # RecvCmd
+    : 'Шаг_Вперед'                        # StepForward
+    | 'Повернуть_Влево'                   # TurnLeft
+    | 'Повернуть_Вправо'                  # TurnRight
+    | 'Поднять_Коробку'                   # PickUp
+    | 'Опустить_Коробку'                  # Drop
+    | 'ПАУЗА' NUMBER                      # Pause
+    | 'ОТПРАВИТЬ' STRING ARROW ID         # Send
+    | 'ПОЛУЧИТЬ' (STRING | STAR)          # Receive
     ;
 
-// ---------- УСЛОВИЯ ----------
+/* ──────────────────────── УСЛОВИЯ ───────────────────────────────── */
 condition
-    : 'СООБЩЕНИЕ?'                       # HasMsgCond   // есть ли входящее
-    | ID                                 # IdentifierCond
-    | position                           # PositionCond
+    : 'СООБЩЕНИЕ?' (STRING)?              # MessageCondition
+    | 'Впереди_Свободно'                  # PathClearCondition
+    | 'Есть_Коробка_Впереди'              # BoxAheadCondition
+    | 'Несу_Коробку'                      # CarryingBoxCondition
+    | 'Коллега_Впереди'                   # ActorAheadCondition
+    | ID                                  # IdentifierCondition
+    | position                            # PositionCondition
     ;
 
-// ---------- ЛЕКСЕМА ----------
-ID      : [a-zA-Zа-яА-Я_][a-zA-Zа-яА-Я0-9_]* ;
-NUMBER  : [0-9]+ ('.' [0-9]+)? ;
-STRING  : '"' (~["\r\n] | '\\"')* '"' ;      // поддержка кавычек внутри строки
+/* ───────────── РЕЗУЛЬТАТ ПРОГРАММЫ ─────────────────────────────── */
+result_expr
+    : 'РЕЗУЛЬТАТ' ID SEMI ;
 
-LPAREN  : '(' ; RPAREN  : ')' ;
-LBRACE  : '{' ; RBRACE  : '}' ;
-COMMA   : ',' ;  SEMI   : ';' ;
-EQ      : '=' ;  STAR   : '*' ;
+/* ───────────────────────── ЛЕКСЕР ───────────────────────────────── */
+ID        : [a-zA-Zа-яА-Я_][a-zA-Zа-яА-Я0-9_]* ;
+NUMBER    : [0-9]+ ('.' [0-9]+)? ;
+STRING    : '"' (~["\r\n] | '\\"')* '"' ;
 
-WS      : [ \t\r\n]+          -> skip ;
-COMMENT : '//' ~[\r\n]*       -> skip ;
+LPAREN    : '(' ;
+RPAREN    : ')' ;
+LBRACE    : '{' ;
+RBRACE    : '}' ;
+COMMA     : ',' ;
+SEMI      : ';' ;
+EQ        : '=' ;
+PLUS      : '+' ;
+STAR      : '*' ;
+ARROW     : '->' ;
+
+WS        : [ \t\r\n]+          -> skip ;
+COMMENT   : '//' ~[\r\n]*       -> skip ;

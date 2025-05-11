@@ -1,169 +1,227 @@
 import 'ast_node.dart';
 import 'condition.dart';
 
-class BehaviorBlock extends AstNode {
-  final List<BehaviorStatement> statements;
-
-  BehaviorBlock(this.statements);
-
-  @override
-  String toString() => 'BehaviorBlock(${statements.join(', ')})';
-}
-
-class BehaviorStatement extends AstNode {
-  final String actor;
-  final List<Action> actions;
-
-  BehaviorStatement(this.actor, this.actions);
-
-  @override
-  String toString() => '$actor: ${actions.join('; ')}';
-}
-
-// Новый блок для асинхронного исполнения
-class AsyncBlock extends AstNode {
-  final List<AsyncThread> threads;
-
-  AsyncBlock(this.threads);
-
-  @override
-  String toString() => 'AsyncBlock(${threads.join(', ')})';
-}
-
-class AsyncThread extends AstNode {
-  final String name;
-  final List<Action> actions;
-
-  AsyncThread(this.name, this.actions);
-
-  @override
-  String toString() => 'Thread($name, ${actions.join('; ')})';
-}
-
+/// Базовый класс для действий
 abstract class Action extends AstNode {}
 
-class WhileLoop extends Action {
-  final List<Action> body;
-  final Condition condition;
+class Thread extends AstNode {
+  final String name;
+  final ActionBlock actions;
 
-  WhileLoop(this.body, this.condition);
-
-  @override
-  String toString() => 'WHILE $condition { ${body.join('; ')} }';
-}
-
-class RepeatForever extends Action {
-  final List<Action> body;
-
-  RepeatForever(this.body);
-
-  @override
-  String toString() => 'REPEAT { ${body.join('; ')} }';
-}
-
-class ConditionalAction extends Action {
-  final Condition condition;
-  final Action thenAction;
-  final Action? elseAction;
-
-  ConditionalAction(this.condition, this.thenAction, this.elseAction);
+  Thread(this.name, this.actions);
 
   @override
   String toString() {
-    final elseStr = elseAction != null ? ' ELSE $elseAction' : '';
-    return 'IF $condition THEN $thenAction$elseStr';
+    final buffer = StringBuffer();
+    buffer.write('Thread(\n');
+    buffer.write('  name: "$name",\n');
+    
+    // Indent the actions representation
+    final actionsStr = actions.toString().split('\n')
+        .map((line) => '  $line').join('\n');
+    buffer.write('$actionsStr\n');
+    
+    buffer.write(')');
+    
+    return buffer.toString();
   }
 }
 
-class WaitAction extends Action {
-  final String actorId;
+class ThreadSet extends AstNode {
+  final List<Thread> threads;
+  final String? name;
+  final String? foldOp;
 
-  WaitAction(this.actorId);
+  ThreadSet(this.threads, {this.name, this.foldOp});
 
   @override
-  String toString() => 'WAIT "$actorId"';
+  String toString() {
+    final buffer = StringBuffer();
+    buffer.write('ThreadSet(\n');
+    if (name != null) {
+      buffer.write('  name: "$name",\n');
+    }
+    if (foldOp != null) {
+      buffer.write('  foldOp: "$foldOp",\n');
+    }
+    buffer.write('  threads: [\n');
+    
+    for (var thread in threads) {
+      // Indent the thread representation
+      final threadStr = thread.toString().split('\n')
+          .map((line) => '    $line').join('\n');
+      buffer.write('$threadStr,\n');
+    }
+    
+    buffer.write('  ]\n');
+    buffer.write(')');
+    
+    return buffer.toString();
+  }
 }
 
-// Новые действия для асинхронной работы
-class StartAsyncAction extends Action {
-  final String threadId;
-  
-  StartAsyncAction(this.threadId);
-  
+/// Команда шаг вперед
+class MoveAction extends Action {
   @override
-  String toString() => 'START "$threadId"';
+  String toString() => 'MoveAction(Шаг_Вперед)';
 }
 
-class StopAsyncAction extends Action {
-  final String threadId;
-  
-  StopAsyncAction(this.threadId);
-  
+/// Команда поворот влево
+class TurnLeftAction extends Action {
   @override
-  String toString() => 'STOP "$threadId"';
+  String toString() => 'TurnLeftAction(Повернуть_Влево)';
 }
 
-class ParallelAction extends Action {
-  final List<Action> actions;
-  
-  ParallelAction(this.actions);
-  
+/// Команда поворот вправо
+class TurnRightAction extends Action {
   @override
-  String toString() => 'PARALLEL { ${actions.join('; ')} }';
+  String toString() => 'TurnRightAction(Повернуть_Вправо)';
 }
 
-// Команды
-class StepCommand extends Action {
+/// Команда поднять коробку
+class PickUpAction extends Action {
   @override
-  String toString() => 'StepForward()';
+  String toString() => 'PickUpAction(Поднять_Коробку)';
 }
 
-class TurnLeftCommand extends Action {
+/// Команда опустить коробку
+class DropAction extends Action {
   @override
-  String toString() => 'TurnLeft()';
+  String toString() => 'DropAction(Опустить_Коробку)';
 }
 
-class TurnRightCommand extends Action {
-  @override
-  String toString() => 'TurnRight()';
-}
-
-class PickUpCommand extends Action {
-  @override
-  String toString() => 'PickUp()';
-}
-
-class DropCommand extends Action {
-  @override
-  String toString() => 'Drop()';
-}
-
-class PauseCommand extends Action {
+/// Команда пауза
+class PauseAction extends Action {
   final double duration;
 
-  PauseCommand(this.duration);
+  PauseAction(this.duration);
 
   @override
-  String toString() => 'Pause($duration)';
+  String toString() => 'PauseAction(duration: $duration)';
 }
 
-class SendMessageCommand extends Action {
+/// Команда отправить сообщение
+class SendAction extends Action {
   final String message;
-  final String recipientId;
+  final String recipient;
 
-  SendMessageCommand(this.message, this.recipientId);
+  SendAction(this.message, this.recipient);
 
   @override
-  String toString() => 'Send("$message" -> "$recipientId")';
+  String toString() => 'SendAction(message: "$message", recipient: "$recipient")';
 }
 
-class ReceiveMessageCommand extends Action {
-  final String pattern;
-  final bool anyMessage;
+/// Команда получить сообщение
+class ReceiveAction extends Action {
+  final String? messagePattern;
 
-  ReceiveMessageCommand(this.pattern, {this.anyMessage = false});
+  ReceiveAction({this.messagePattern});
 
   @override
-  String toString() => 'Receive(${anyMessage ? '*' : '"$pattern"'})';
+  String toString() => 'ReceiveAction(pattern: ${messagePattern != null ? '"$messagePattern"' : '*'})';
+}
+
+/// Блок действий
+class ActionBlock extends AstNode {
+  final List<Action> actions;
+
+  ActionBlock(this.actions);
+
+  @override
+  String toString() {
+    final buffer = StringBuffer();
+    buffer.write('ActionBlock(\n');
+    buffer.write('  actions: [\n');
+
+    for (var action in actions) {
+      // Indent the action representation
+      final actionStr = action.toString().split('\n')
+          .map((line) => '    $line').join('\n');
+      buffer.write('$actionStr,\n');
+    }
+
+    buffer.write('  ]\n');
+    buffer.write(')');
+
+    return buffer.toString();
+  }
+}
+
+/// Цикл while
+class WhileLoop extends Action {
+  final Condition condition;
+  final ActionBlock body;
+
+  WhileLoop(this.condition, this.body);
+
+  @override
+  String toString() {
+    final buffer = StringBuffer();
+    buffer.write('WhileLoop(\n');
+    buffer.write('  condition: $condition,\n');
+
+    // Indent the body representation
+    final bodyStr = body.toString().split('\n')
+        .map((line) => '  $line').join('\n');
+    buffer.write('$bodyStr\n');
+
+    buffer.write(')');
+
+    return buffer.toString();
+  }
+}
+
+/// Цикл repeat forever
+class RepeatLoop extends Action {
+  final ActionBlock body;
+
+  RepeatLoop(this.body);
+
+  @override
+  String toString() {
+    final buffer = StringBuffer();
+    buffer.write('RepeatLoop(\n');
+
+    // Indent the body representation
+    final bodyStr = body.toString().split('\n')
+        .map((line) => '  $line').join('\n');
+    buffer.write('$bodyStr\n');
+
+    buffer.write(')');
+
+    return buffer.toString();
+  }
+}
+
+/// Условный оператор if-then-else
+class ConditionalAction extends Action {
+  final Condition condition;
+  final ActionBlock thenBlock;
+  final ActionBlock? elseBlock;
+
+  ConditionalAction(this.condition, this.thenBlock, this.elseBlock);
+
+  @override
+  String toString() {
+    final buffer = StringBuffer();
+    buffer.write('ConditionalAction(\n');
+    buffer.write('  condition: $condition,\n');
+
+    // Indent the then block representation
+    final thenStr = thenBlock.toString().split('\n')
+        .map((line) => '  $line').join('\n');
+    buffer.write('  then: $thenStr,\n');
+
+    if (elseBlock != null) {
+      // Indent the else block representation
+      final elseStr = elseBlock.toString().split('\n')
+          .map((line) => '  $line').join('\n');
+      buffer.write('  else: $elseStr\n');
+    }
+
+    buffer.write(')');
+
+    return buffer.toString();
+  }
 }
 

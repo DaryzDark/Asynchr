@@ -30,8 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  antlr4: ^4.13.2
-  logger: ^2.5.0
+  provider: ^6.0.5  # Для управления состоянием
+  antlr4: ^4.13.2  # Для парсинга DSL
+  logger: ^2.5.0   # Для логирования
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
