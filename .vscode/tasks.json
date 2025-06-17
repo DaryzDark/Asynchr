@@ -1,0 +1,28 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Generate ANTLR Parser",
+        "type": "shell",
+        "command": "java",
+        "args": [
+          "-jar",
+          "C:\\Users\\danie\\Documents\\dev\\antlr4\\antlr-4.13.2-complete.jar",
+          "-Dlanguage=Dart",
+          "-visitor",
+          "-o",
+          "asynchr_simulator/lib/parser",
+          "asynchr_simulator/grammar/AsynchrGrammar.g4"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "presentation": {
+          "reveal": "always",
+          "panel": "shared"
+        },
+        "problemMatcher": []
+      }
+    ]
+  }
